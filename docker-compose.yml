@@ -1,0 +1,20 @@
+name: chem-qa
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: chem-qa-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: chem_root_dev_2026
+      MYSQL_DATABASE: chem_qa
+      MYSQL_USER: chem_user
+      MYSQL_PASSWORD: chem_pass_dev_2026
+    volumes:
+      - chem_qa_mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  chem_qa_mysql_data:

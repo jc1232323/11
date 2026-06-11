@@ -1,0 +1,3 @@
+1、icon用开源的，不要用emoji
+2、整体风格可以参考deepseek的
+3、

@@ -1,0 +1,23 @@
+{
+  "name": "chem-qa",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "predev": "lsof -ti :3001 2>/dev/null | xargs kill -9 2>/dev/null || true",
+    "stop": "lsof -ti :3001,:5173 2>/dev/null | xargs kill -9 2>/dev/null || true",
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @chem-qa/api\" \"npm run dev -w @chem-qa/web\"",
+    "dev:api": "npm run dev -w @chem-qa/api",
+    "dev:web": "npm run dev -w @chem-qa/web",
+    "build": "npm run build -w @chem-qa/api && npm run build -w @chem-qa/web",
+    "import-content": "npm run import-content -w @chem-qa/api",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "ts-node": "^10.9.2",
+    "dotenv": "^16.4.7"
+  }
+}

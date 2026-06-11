@@ -1,0 +1,214 @@
+{
+  "modules": [
+    {
+      "slug": "foundations",
+      "title": "化学基础",
+      "sort": 1,
+      "chapters": [
+        {
+          "slug": "amount-of-substance",
+          "title": "物质的量",
+          "sort": 1,
+          "topics": [
+            {
+              "slug": "mol-concept",
+              "title": "摩尔与阿伏伽德罗常数",
+              "file": "chapters/amount-of-substance/mol-concept.md",
+              "sort": 1
+            },
+            {
+              "slug": "molar-mass",
+              "title": "摩尔质量",
+              "file": "chapters/amount-of-substance/molar-mass.md",
+              "sort": 2
+            },
+            {
+              "slug": "gas-molar-volume",
+              "title": "气体摩尔体积",
+              "file": "chapters/amount-of-substance/gas-molar-volume.md",
+              "sort": 3
+            },
+            {
+              "slug": "amount-concentration",
+              "title": "物质的量浓度",
+              "file": "chapters/amount-of-substance/amount-concentration.md",
+              "sort": 4
+            }
+          ]
+        },
+        {
+          "slug": "ionic-reactions",
+          "title": "离子反应",
+          "sort": 2,
+          "topics": [
+            {
+              "slug": "electrolyte",
+              "title": "电解质与电离",
+              "file": "chapters/ionic-reactions/electrolyte.md",
+              "sort": 1
+            },
+            {
+              "slug": "ion-equations",
+              "title": "离子方程式",
+              "file": "chapters/ionic-reactions/ion-equations.md",
+              "sort": 2
+            },
+            {
+              "slug": "precipitation",
+              "title": "沉淀反应",
+              "file": "chapters/ionic-reactions/precipitation.md",
+              "sort": 3
+            },
+            {
+              "slug": "redox-intro",
+              "title": "氧化还原反应初步",
+              "file": "chapters/ionic-reactions/redox-intro.md",
+              "sort": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "structure",
+      "title": "物质的结构",
+      "sort": 2,
+      "chapters": [
+        {
+          "slug": "atomic-structure",
+          "title": "原子结构",
+          "sort": 1,
+          "topics": [
+            {
+              "slug": "atom-structure",
+              "title": "原子构成与核外电子",
+              "file": "structure/atomic-structure/atom-structure.md",
+              "sort": 1
+            },
+            {
+              "slug": "electron-configuration",
+              "title": "核外电子排布",
+              "file": "structure/atomic-structure/electron-configuration.md",
+              "sort": 2
+            },
+            {
+              "slug": "isotopes",
+              "title": "同位素",
+              "file": "structure/atomic-structure/isotopes.md",
+              "sort": 3
+            }
+          ]
+        },
+        {
+          "slug": "chemical-bonding",
+          "title": "化学键",
+          "sort": 2,
+          "topics": [
+            {
+              "slug": "ionic-covalent-bond",
+              "title": "离子键与共价键",
+              "file": "structure/chemical-bonding/ionic-covalent-bond.md",
+              "sort": 1
+            },
+            {
+              "slug": "molecular-polarity",
+              "title": "分子极性",
+              "file": "structure/chemical-bonding/molecular-polarity.md",
+              "sort": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "reactions-energy",
+      "title": "化学反应与能量",
+      "sort": 3,
+      "chapters": [
+        {
+          "slug": "reaction-heat",
+          "title": "反应热",
+          "sort": 1,
+          "topics": [
+            {
+              "slug": "enthalpy",
+              "title": "焓变与热化学方程式",
+              "file": "reactions-energy/reaction-heat/enthalpy.md",
+              "sort": 1
+            },
+            {
+              "slug": "hess-law",
+              "title": "盖斯定律",
+              "file": "reactions-energy/reaction-heat/hess-law.md",
+              "sort": 2
+            }
+          ]
+        },
+        {
+          "slug": "reaction-rate",
+          "title": "反应速率",
+          "sort": 2,
+          "topics": [
+            {
+              "slug": "rate-factors",
+              "title": "影响反应速率的因素",
+              "file": "reactions-energy/reaction-rate/rate-factors.md",
+              "sort": 1
+            },
+            {
+              "slug": "collision-theory",
+              "title": "碰撞理论",
+              "file": "reactions-energy/reaction-rate/collision-theory.md",
+              "sort": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "organic",
+      "title": "有机化学基础",
+      "sort": 4,
+      "chapters": [
+        {
+          "slug": "hydrocarbons",
+          "title": "烃",
+          "sort": 1,
+          "topics": [
+            {
+              "slug": "alkanes-alkenes",
+              "title": "烷烃与烯烃",
+              "file": "organic/hydrocarbons/alkanes-alkenes.md",
+              "sort": 1
+            },
+            {
+              "slug": "aromatic-hydrocarbons",
+              "title": "芳香烃",
+              "file": "organic/hydrocarbons/aromatic-hydrocarbons.md",
+              "sort": 2
+            }
+          ]
+        },
+        {
+          "slug": "functional-groups",
+          "title": "官能团",
+          "sort": 2,
+          "topics": [
+            {
+              "slug": "alcohols-phenols",
+              "title": "醇与酚",
+              "file": "organic/functional-groups/alcohols-phenols.md",
+              "sort": 1
+            },
+            {
+              "slug": "carboxylic-acids",
+              "title": "羧酸",
+              "file": "organic/functional-groups/carboxylic-acids.md",
+              "sort": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
