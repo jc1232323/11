@@ -1,9 +1,8 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
-  Query,
+  Get,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -32,6 +31,12 @@ export class AuthController {
     });
   }
 
+  /** Send a 6-digit verification code to the email before registration */
+  @Post('send-code')
+  async sendCode(@Body() dto: ForgotPasswordDto /* reuses { email } */) {
+    return this.auth.sendVerificationCode(dto.email);
+  }
+
   @Post('register')
   async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
     const user = await this.auth.register(dto);
@@ -58,17 +63,6 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: User) {
     return { user: this.auth.sanitizeUser(user) };
-  }
-
-  @Get('verify-email')
-  async verifyEmail(@Query('token') token: string) {
-    return this.auth.verifyEmail(token);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('resend-verification')
-  async resendVerification(@CurrentUser() user: User) {
-    return this.auth.resendVerification(user.id);
   }
 
   @Post('forgot-password')

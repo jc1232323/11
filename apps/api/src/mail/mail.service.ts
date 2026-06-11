@@ -27,34 +27,28 @@ export class MailService {
     return (this.config.get<string>('CLIENT_URL') || 'http://localhost:5173').replace(/\/$/, '');
   }
 
-  async sendVerificationEmail(to: string, token: string): Promise<void> {
-    const link = `${this.clientUrl}/verify-email?token=${token}`;
+  async sendVerificationCode(to: string, code: string): Promise<void> {
     try {
       await this.transporter.sendMail({
         from: this.from,
         to,
-        subject: '验证你的邮箱 - 化学知识问答',
+        subject: '注册验证码 - 化学知识问答',
         html: `
           <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 2rem;">
-            <h2 style="color: #1d1d1f;">验证你的邮箱</h2>
+            <h2 style="color: #1d1d1f;">邮箱验证码</h2>
             <p style="color: #555; line-height: 1.6;">
-              感谢注册化学知识问答平台！请点击下方按钮完成邮箱验证：
+              你正在注册化学知识问答平台，验证码为：
             </p>
-            <a href="${link}"
-               style="display: inline-block; margin: 1.5rem 0; padding: 0.75rem 1.5rem; background: #4F6EF7; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500;">
-              验证邮箱
-            </a>
-            <p style="color: #888; font-size: 0.85rem;">
-              如果按钮无法点击，请复制以下链接到浏览器：<br/>
-              <a href="${link}" style="color: #4F6EF7;">${link}</a>
-            </p>
-            <p style="color: #888; font-size: 0.85rem;">此链接 24 小时内有效。</p>
+            <div style="margin: 1.5rem 0; padding: 1rem 1.5rem; background: #f5f5f7; border-radius: 8px; text-align: center;">
+              <span style="font-size: 32px; font-weight: 700; letter-spacing: 6px; color: #4F6EF7;">${code}</span>
+            </div>
+            <p style="color: #888; font-size: 0.85rem;">验证码 5 分钟内有效。如果你没有进行注册操作，请忽略此邮件。</p>
           </div>
         `,
       });
-      this.logger.log(`验证邮件已发送至 ${to}`);
+      this.logger.log(`验证码已发送至 ${to}`);
     } catch (e) {
-      this.logger.error(`发送验证邮件失败: ${e instanceof Error ? e.message : e}`);
+      this.logger.error(`发送验证码失败: ${e instanceof Error ? e.message : e}`);
       throw e;
     }
   }

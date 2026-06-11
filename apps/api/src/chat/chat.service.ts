@@ -92,18 +92,6 @@ export class ChatService {
     dto: SendMessageDto,
     res: Response,
   ) {
-    // Check email verification
-    if (!user.emailVerified) {
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.flushHeaders?.();
-      res.write(`data: ${JSON.stringify({ error: '请先验证邮箱后才能使用 AI 对话。请检查你的收件箱（含垃圾邮件），点击验证链接完成验证。' })}\n\n`);
-      res.write('data: [DONE]\n\n');
-      res.end();
-      return;
-    }
-
     const session = await this.assertSession(user.id, sessionId);
     const roleMode = dto.roleMode ?? session.roleMode;
     if (dto.roleMode) {

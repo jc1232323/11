@@ -29,12 +29,6 @@ export class User {
   @Column({ name: 'email_verified', default: false })
   emailVerified!: boolean;
 
-  @Column({ name: 'email_verify_token', type: 'varchar', length: 128, nullable: true })
-  emailVerifyToken!: string | null;
-
-  @Column({ name: 'email_verify_expires', type: 'datetime', nullable: true })
-  emailVerifyExpires!: Date | null;
-
   @Column({ name: 'reset_password_token', type: 'varchar', length: 128, nullable: true })
   resetPasswordToken!: string | null;
 

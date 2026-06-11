@@ -14,7 +14,7 @@ type AuthContextValue = {
   loading: boolean;
   refresh: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, nickname?: string) => Promise<void>;
+  register: (email: string, password: string, code: string, nickname?: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -48,10 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const register = useCallback(
-    async (email: string, password: string, nickname?: string) => {
+    async (email: string, password: string, code: string, nickname?: string) => {
       const res = await api<{ user: User }>('/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ email, password, nickname }),
+        body: JSON.stringify({ email, password, code, nickname }),
       });
       setUser(res.user);
     },

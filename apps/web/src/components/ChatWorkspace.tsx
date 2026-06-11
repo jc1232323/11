@@ -28,7 +28,6 @@ import {
   Sparkles,
   AlertTriangle,
   RefreshCw,
-  MailWarning,
 } from 'lucide-react';
 
 type AskMode = 'explain' | 'practice' | 'free';
@@ -46,7 +45,6 @@ export function ChatWorkspace() {
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState('');
   const [lastSentContent, setLastSentContent] = useState('');
-  const [resendingVerification, setResendingVerification] = useState(false);
   const [knowledgeTree, setKnowledgeTree] = useState<KnowledgeTree>([]);
   const [knowledgeSlug, setKnowledgeSlug] = useState('');
   const [askMode, setAskMode] = useState<AskMode>('free');
@@ -291,7 +289,7 @@ export function ChatWorkspace() {
     });
   }
 
-  const inputDisabled = initializing || streaming || (user != null && !user.emailVerified);
+  const inputDisabled = initializing || streaming;
 
   return (
     <div className="cw">
@@ -446,35 +444,6 @@ export function ChatWorkspace() {
               })}
             </AnimatePresence>
           </div>
-
-          {/* Verification Banner */}
-          {user && !user.emailVerified && (
-            <div className="cw-verify-banner">
-              <MailWarning size={18} strokeWidth={1.8} />
-              <div className="cw-verify-text">
-                <span>你的邮箱尚未验证，请查收验证邮件后才能使用 AI 对话</span>
-                <button
-                  type="button"
-                  className="cw-verify-resend"
-                  disabled={resendingVerification}
-                  onClick={async () => {
-                    setResendingVerification(true);
-                    try {
-                      await api<{ message: string }>('/auth/resend-verification', { method: 'POST' });
-                      setError('');
-                      alert('验证邮件已重新发送，请查收');
-                    } catch {
-                      alert('发送失败，请稍后重试');
-                    } finally {
-                      setResendingVerification(false);
-                    }
-                  }}
-                >
-                  {resendingVerification ? '发送中...' : '重新发送验证邮件'}
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* Error with retry */}
           {error && (
@@ -859,40 +828,6 @@ export function ChatWorkspace() {
           background: rgba(239, 68, 68, 0.14);
           border-color: rgba(239, 68, 68, 0.4);
         }
-        .cw-verify-banner {
-          display: flex;
-          align-items: flex-start;
-          gap: 0.6rem;
-          padding: 0.75rem 1.25rem;
-          background: rgba(245, 158, 11, 0.06);
-          border-bottom: 1px solid rgba(245, 158, 11, 0.15);
-          color: #b45309;
-          font-size: 0.85rem;
-          flex-shrink: 0;
-        }
-        .cw-verify-banner svg { flex-shrink: 0; margin-top: 0.1rem; }
-        .cw-verify-text {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        .cw-verify-resend {
-          padding: 0.25rem 0.6rem;
-          border-radius: var(--radius-sm);
-          border: 1px solid rgba(245, 158, 11, 0.3);
-          background: rgba(245, 158, 11, 0.1);
-          color: #b45309;
-          font-size: 0.8rem;
-          font-weight: 500;
-          cursor: pointer;
-          white-space: nowrap;
-          transition: all var(--duration) var(--ease);
-        }
-        .cw-verify-resend:hover:not(:disabled) {
-          background: rgba(245, 158, 11, 0.18);
-        }
-        .cw-verify-resend:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* Composer */
         .cw-composer {

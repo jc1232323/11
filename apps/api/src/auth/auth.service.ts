@@ -14,6 +14,17 @@ import { MailService } from '../mail/mail.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
+/** In-memory store for email verification codes (email -> { code, expiresAt }) */
+const verificationCodes = new Map<string, { code: string; expiresAt: number }>();
+
+/** Clean expired codes periodically */
+setInterval(() => {
+  const now = Date.now();
+  for (const [email, entry] of verificationCodes) {
+    if (entry.expiresAt < now) verificationCodes.delete(email);
+  }
+}, 60_000);
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,30 +33,58 @@ export class AuthService {
     private readonly mail: MailService,
   ) {}
 
+  /** Send a 6-digit verification code to the email (pre-registration) */
+  async sendVerificationCode(email: string): Promise<{ message: string }> {
+    // Check if already registered
+    const existing = await this.users.findOne({ where: { email } });
+    if (existing) {
+      throw new ConflictException('该邮箱已注册');
+    }
+
+    // Rate limit: don't send again if code was sent less than 60s ago
+    const prev = verificationCodes.get(email);
+    if (prev && prev.expiresAt - 4 * 60 * 1000 > Date.now()) {
+      throw new BadRequestException('验证码已发送，请 60 秒后再试');
+    }
+
+    const code = String(Math.floor(100000 + Math.random() * 900000)); // 6 digits
+    verificationCodes.set(email, { code, expiresAt: Date.now() + 5 * 60 * 1000 }); // 5min
+
+    await this.mail.sendVerificationCode(email, code);
+    return { message: '验证码已发送' };
+  }
+
   async register(dto: RegisterDto): Promise<User> {
+    // Verify the code first
+    const entry = verificationCodes.get(dto.email);
+    if (!entry) {
+      throw new BadRequestException('请先获取验证码');
+    }
+    if (entry.expiresAt < Date.now()) {
+      verificationCodes.delete(dto.email);
+      throw new BadRequestException('验证码已过期，请重新获取');
+    }
+    if (entry.code !== dto.code) {
+      throw new BadRequestException('验证码错误');
+    }
+
+    // Code is valid — remove it
+    verificationCodes.delete(dto.email);
+
     const existing = await this.users.findOne({ where: { email: dto.email } });
     if (existing) {
       throw new ConflictException('该邮箱已注册');
     }
     const passwordHash = await bcrypt.hash(dto.password, 10);
-    const emailVerifyToken = crypto.randomUUID();
-    const emailVerifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
 
     const user = this.users.create({
       email: dto.email,
       passwordHash,
       nickname: dto.nickname?.trim() || dto.email.split('@')[0],
       defaultRole: 'guide',
-      emailVerified: false,
-      emailVerifyToken,
-      emailVerifyExpires,
+      emailVerified: true, // verified during registration via code
     });
-    const saved = await this.users.save(user);
-
-    // Send verification email (fire-and-forget, don't block registration)
-    this.mail.sendVerificationEmail(dto.email, emailVerifyToken).catch(() => {});
-
-    return saved;
+    return this.users.save(user);
   }
 
   async validateUser(dto: LoginDto): Promise<User> {
@@ -54,38 +93,6 @@ export class AuthService {
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('邮箱或密码错误');
     return user;
-  }
-
-  async verifyEmail(token: string): Promise<{ success: boolean; message: string }> {
-    if (!token) {
-      throw new BadRequestException('验证链接无效');
-    }
-    const user = await this.users.findOne({ where: { emailVerifyToken: token } });
-    if (!user) {
-      throw new BadRequestException('验证链接无效或已过期');
-    }
-    if (user.emailVerifyExpires && user.emailVerifyExpires < new Date()) {
-      throw new BadRequestException('验证链接已过期，请重新发送');
-    }
-    user.emailVerified = true;
-    user.emailVerifyToken = null;
-    user.emailVerifyExpires = null;
-    await this.users.save(user);
-    return { success: true, message: '邮箱验证成功' };
-  }
-
-  async resendVerification(userId: string): Promise<{ message: string }> {
-    const user = await this.users.findOne({ where: { id: userId } });
-    if (!user) throw new BadRequestException('用户不存在');
-    if (user.emailVerified) {
-      return { message: '邮箱已验证，无需重复操作' };
-    }
-    const token = crypto.randomUUID();
-    user.emailVerifyToken = token;
-    user.emailVerifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    await this.users.save(user);
-    await this.mail.sendVerificationEmail(user.email, token);
-    return { message: '验证邮件已重新发送' };
   }
 
   async forgotPassword(email: string): Promise<{ message: string }> {
