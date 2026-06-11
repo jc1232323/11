@@ -10,6 +10,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { TrainingPage } from './pages/TrainingPage';
+import { TrainingPackPage } from './pages/TrainingPackPage';
 
 export default function App() {
   return (
@@ -40,6 +41,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <TrainingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="training/:packId"
+          element={
+            <ProtectedRoute>
+              <TrainingPackPage />
             </ProtectedRoute>
           }
         />
