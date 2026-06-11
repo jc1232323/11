@@ -3,14 +3,17 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { User } from '../entities/user.entity';
 import { CurrentUser } from './current-user.decorator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -55,5 +58,26 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: User) {
     return { user: this.auth.sanitizeUser(user) };
+  }
+
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.auth.verifyEmail(token);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('resend-verification')
+  async resendVerification(@CurrentUser() user: User) {
+    return this.auth.resendVerification(user.id);
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.auth.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.auth.resetPassword(dto.token, dto.password);
   }
 }

@@ -1,0 +1,82 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "化学 问答" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - text: 化学
+        - generic [ref=e7]: 问答
+      - navigation [ref=e8]:
+        - link "关于" [ref=e9] [cursor=pointer]:
+          - /url: /about
+        - link "登录" [ref=e10] [cursor=pointer]:
+          - /url: /login
+        - link "注册" [ref=e11] [cursor=pointer]:
+          - /url: /register
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - paragraph [ref=e17]:
+            - img [ref=e18]
+            - text: 全国高中生化学学习平台
+          - heading "系统化知识点 + AI 辅导问答" [level=1] [ref=e21]:
+            - text: 系统化知识点
+            - text: + AI 辅导问答
+          - paragraph [ref=e22]: 登录即可开始 AI 对话，按模块浏览高中化学核心知识， 支持按知识点讲解、出题练习，双角色随心切换。
+          - generic [ref=e23]:
+            - link "免费注册" [ref=e24] [cursor=pointer]:
+              - /url: /register
+              - text: 免费注册
+              - img [ref=e25]
+            - link "已有账号登录" [ref=e27] [cursor=pointer]:
+              - /url: /login
+          - generic [ref=e28]:
+            - generic [ref=e29]: 4+ 模块
+            - generic [ref=e31]: 20+ 知识点
+            - generic [ref=e33]: 流式 AI 回复
+            - generic [ref=e35]: 公式渲染
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - img [ref=e39]
+            - generic [ref=e41]: AI 对话
+          - generic [ref=e42]:
+            - generic [ref=e43]: 学习讲解：摩尔与阿伏伽德罗常数
+            - generic [ref=e44]: 物质的量 n 表示粒子集合的物理量，1 mol 含有 6.022 x 10²³ 个粒子...
+      - generic [ref=e46]:
+        - heading "知识模块" [level=2] [ref=e47]
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - img [ref=e51]
+            - heading "化学基础" [level=3] [ref=e53]
+            - paragraph [ref=e54]: 物质的量、离子反应
+          - generic [ref=e55]:
+            - img [ref=e57]
+            - heading "物质的结构" [level=3] [ref=e61]
+            - paragraph [ref=e62]: 原子结构、化学键
+          - generic [ref=e63]:
+            - img [ref=e65]
+            - heading "化学反应与能量" [level=3] [ref=e67]
+            - paragraph [ref=e68]: 反应热、反应速率
+          - generic [ref=e69]:
+            - img [ref=e71]
+            - heading "有机化学基础" [level=3] [ref=e73]
+            - paragraph [ref=e74]: 烃、官能团
+      - generic [ref=e76]:
+        - heading "平台特色" [level=2] [ref=e77]
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - img [ref=e81]
+            - heading "三级知识目录" [level=3] [ref=e85]
+            - paragraph [ref=e86]: 模块、章节、知识点，覆盖高中化学核心内容。
+          - generic [ref=e87]:
+            - img [ref=e89]
+            - heading "AI 智能辅导" [level=3] [ref=e91]
+            - paragraph [ref=e92]: 流式回复，可按知识点讲解或出题练习。
+          - generic [ref=e93]:
+            - img [ref=e95]
+            - heading "十种 AI 角色" [level=3] [ref=e99]
+            - paragraph [ref=e100]: 温柔老师、高考冲刺、实验达人等，按场景切换辅导风格。
+          - generic [ref=e101]:
+            - img [ref=e103]
+            - heading "公式渲染" [level=3] [ref=e105]
+            - paragraph [ref=e106]: Markdown + LaTeX，化学公式清晰可读。

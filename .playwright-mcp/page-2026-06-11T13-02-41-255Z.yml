@@ -1,0 +1,163 @@
+- generic [ref=e130]:
+  - complementary [ref=e131]:
+    - link "化学 问答" [ref=e132] [cursor=pointer]:
+      - /url: /
+      - text: 化学
+      - generic [ref=e133]: 问答
+    - navigation [ref=e134]:
+      - link "AI 问答" [ref=e135] [cursor=pointer]:
+        - /url: /
+        - img [ref=e136]
+        - text: AI 问答
+      - link "化学知识" [ref=e138] [cursor=pointer]:
+        - /url: /chemistry
+        - img [ref=e139]
+        - text: 化学知识
+      - link "专题训练" [ref=e141] [cursor=pointer]:
+        - /url: /training
+        - img [ref=e142]
+        - text: 专题训练
+      - link "设置" [ref=e148] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e149]
+        - text: 设置
+      - link "关于" [ref=e152] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e153]
+        - text: 关于
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - img [ref=e157]
+        - text: CodexTest
+      - button "退出" [ref=e160] [cursor=pointer]:
+        - img [ref=e161]
+        - text: 退出
+  - main [ref=e1322]:
+    - generic [ref=e1325]:
+      - complementary [ref=e1326]:
+        - generic [ref=e1327]:
+          - heading "对话" [level=2] [ref=e1328]
+          - button "新建对话" [ref=e1329] [cursor=pointer]:
+            - img [ref=e1330]
+        - list [ref=e1331]:
+          - listitem [ref=e1332]:
+            - button "讲解：物质分类与分散系" [ref=e1333] [cursor=pointer]:
+              - img [ref=e1334]
+              - generic [ref=e1336]: 讲解：物质分类与分散系
+            - button "删除" [ref=e1337] [cursor=pointer]:
+              - img [ref=e1338]
+          - listitem [ref=e1341]:
+            - button "新对话" [ref=e1342] [cursor=pointer]:
+              - img [ref=e1343]
+              - generic [ref=e1345]: 新对话
+            - button "删除" [ref=e1346] [cursor=pointer]:
+              - img [ref=e1347]
+          - listitem [ref=e1350]:
+            - button "新对话" [ref=e1351] [cursor=pointer]:
+              - img [ref=e1352]
+              - generic [ref=e1354]: 新对话
+            - button "删除" [ref=e1355] [cursor=pointer]:
+              - img [ref=e1356]
+      - generic [ref=e1359]:
+        - generic [ref=e1360]:
+          - generic [ref=e1361]:
+            - generic [ref=e1362]: AI 角色
+            - generic [ref=e1364]:
+              - combobox [disabled] [ref=e1365] [cursor=pointer]:
+                - option "思路直达"
+                - option "温柔老师" [selected]
+                - option "基础入门"
+                - option "公式推导"
+                - option "高考冲刺"
+                - option "审题拆题"
+                - option "记忆助手"
+                - option "错题复盘"
+                - option "实验达人"
+                - option "竞赛拓展"
+              - img
+          - generic [ref=e1366]:
+            - generic [ref=e1367]: 知识点
+            - combobox [disabled] [ref=e1368] [cursor=pointer]:
+              - option "不关联知识点"
+              - option "物质分类与分散系" [selected]
+              - option "化学反应基本类型"
+              - option "摩尔与阿伏伽德罗常数"
+              - option "摩尔质量"
+              - option "气体摩尔体积"
+              - option "物质的量浓度"
+              - option "一定物质的量浓度溶液的配制"
+              - option "电解质与电离"
+              - option "离子方程式"
+              - option "沉淀反应"
+              - option "氧化还原反应初步"
+              - option "实验安全与基本操作"
+              - option "物质分离与提纯"
+              - option "气体制备与收集"
+              - option "元素周期表与元素周期律"
+              - option "元素性质递变规律"
+              - option "原子构成与核外电子"
+              - option "核外电子排布"
+              - option "同位素"
+              - option "离子键与共价键"
+              - option "分子极性"
+              - option "晶体类型与性质"
+              - option "杂化轨道与分子空间结构"
+              - option "分子间作用力与氢键"
+              - option "配合物与配位键初步"
+              - option "模型认知与谱图初步"
+              - option "钠及其化合物"
+              - option "氯及其化合物"
+              - option "铝、铁及其重要化合物"
+              - option "金属材料与应用"
+              - option "硫、氮及其化合物"
+              - option "硅及无机非金属材料"
+              - option "焓变与热化学方程式"
+              - option "盖斯定律"
+              - option "影响反应速率的因素"
+              - option "碰撞理论"
+              - option "原电池原理"
+              - option "电解原理与应用"
+              - option "化学平衡状态与特征"
+              - option "平衡移动与勒夏特列原理"
+              - option "化学平衡常数"
+              - option "化学反应方向与调控"
+              - option "弱电解质电离平衡"
+              - option "pH 与酸碱中和滴定"
+              - option "盐类水解"
+              - option "沉淀溶解平衡"
+              - option "有机物结构特点与同分异构"
+              - option "有机物的分离、提纯与鉴别"
+              - option "烷烃与烯烃"
+              - option "芳香烃"
+              - option "卤代烃"
+              - option "醇与酚"
+              - option "羧酸"
+              - option "酯与酯化反应"
+              - option "醛、酮与有机转化"
+              - option "有机合成路线初步"
+              - option "有机实验常见装置与安全"
+              - option "糖类、氨基酸与蛋白质"
+              - option "高分子材料"
+              - option "工业流程与化工生产分析"
+              - option "资源循环利用与绿色化学"
+              - option "新能源与新材料中的化学"
+              - option "环境保护中的化学问题"
+              - option "食品、药物与日用化学"
+              - option "化学风险识别与安全素养"
+          - generic [ref=e1369]:
+            - button "讲解" [disabled] [ref=e1370] [cursor=pointer]:
+              - img [ref=e1371]
+              - text: 讲解
+            - button "练习" [disabled] [ref=e1373] [cursor=pointer]:
+              - img [ref=e1374]
+              - text: 练习
+        - generic [ref=e1378]:
+          - generic [ref=e1379]: 你
+          - paragraph [ref=e1383]:
+            - text: 学习讲解：
+            - strong [ref=e1384]: 物质分类与分散系
+            - text: · 物质分类与化学反应
+        - generic [ref=e1385]:
+          - textbox "输入你的化学问题... (Enter 发送)" [disabled] [ref=e1386]
+          - button [disabled] [ref=e1387]:
+            - img [ref=e1388]

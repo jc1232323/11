@@ -1,0 +1,296 @@
+- generic [ref=e130]:
+  - complementary [ref=e131]:
+    - link "化学 问答" [ref=e132] [cursor=pointer]:
+      - /url: /
+      - text: 化学
+      - generic [ref=e133]: 问答
+    - navigation [ref=e134]:
+      - link "AI 问答" [ref=e135] [cursor=pointer]:
+        - /url: /
+        - img [ref=e136]
+        - text: AI 问答
+      - link "化学知识" [ref=e138] [cursor=pointer]:
+        - /url: /chemistry
+        - img [ref=e139]
+        - text: 化学知识
+      - link "专题训练" [ref=e141] [cursor=pointer]:
+        - /url: /training
+        - img [ref=e142]
+        - text: 专题训练
+      - link "设置" [ref=e148] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e149]
+        - text: 设置
+      - link "关于" [ref=e152] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e153]
+        - text: 关于
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - img [ref=e157]
+        - text: CodexTest
+      - button "退出" [ref=e160] [cursor=pointer]:
+        - img [ref=e161]
+        - text: 退出
+  - main [ref=e1322]:
+    - generic [ref=e1325]:
+      - complementary [ref=e1326]:
+        - generic [ref=e1327]:
+          - heading "对话" [level=2] [ref=e1328]
+          - button "新建对话" [ref=e1329] [cursor=pointer]:
+            - img [ref=e1330]
+        - list [ref=e1331]:
+          - listitem [ref=e1332]:
+            - button "讲解：物质分类与分散系" [ref=e1333] [cursor=pointer]:
+              - img [ref=e1334]
+              - generic [ref=e1336]: 讲解：物质分类与分散系
+            - button "删除" [ref=e1337] [cursor=pointer]:
+              - img [ref=e1338]
+          - listitem [ref=e1341]:
+            - button "新对话" [ref=e1342] [cursor=pointer]:
+              - img [ref=e1343]
+              - generic [ref=e1345]: 新对话
+            - button "删除" [ref=e1346] [cursor=pointer]:
+              - img [ref=e1347]
+          - listitem [ref=e1350]:
+            - button "新对话" [ref=e1351] [cursor=pointer]:
+              - img [ref=e1352]
+              - generic [ref=e1354]: 新对话
+            - button "删除" [ref=e1355] [cursor=pointer]:
+              - img [ref=e1356]
+      - generic [ref=e1359]:
+        - generic [ref=e1360]:
+          - generic [ref=e1361]:
+            - generic [ref=e1362]: AI 角色
+            - generic [ref=e1364]:
+              - combobox [ref=e1365] [cursor=pointer]:
+                - option "思路直达"
+                - option "温柔老师" [selected]
+                - option "基础入门"
+                - option "公式推导"
+                - option "高考冲刺"
+                - option "审题拆题"
+                - option "记忆助手"
+                - option "错题复盘"
+                - option "实验达人"
+                - option "竞赛拓展"
+              - img
+          - generic [ref=e1366]:
+            - generic [ref=e1367]: 知识点
+            - combobox [ref=e1368] [cursor=pointer]:
+              - option "不关联知识点"
+              - option "物质分类与分散系" [selected]
+              - option "化学反应基本类型"
+              - option "摩尔与阿伏伽德罗常数"
+              - option "摩尔质量"
+              - option "气体摩尔体积"
+              - option "物质的量浓度"
+              - option "一定物质的量浓度溶液的配制"
+              - option "电解质与电离"
+              - option "离子方程式"
+              - option "沉淀反应"
+              - option "氧化还原反应初步"
+              - option "实验安全与基本操作"
+              - option "物质分离与提纯"
+              - option "气体制备与收集"
+              - option "元素周期表与元素周期律"
+              - option "元素性质递变规律"
+              - option "原子构成与核外电子"
+              - option "核外电子排布"
+              - option "同位素"
+              - option "离子键与共价键"
+              - option "分子极性"
+              - option "晶体类型与性质"
+              - option "杂化轨道与分子空间结构"
+              - option "分子间作用力与氢键"
+              - option "配合物与配位键初步"
+              - option "模型认知与谱图初步"
+              - option "钠及其化合物"
+              - option "氯及其化合物"
+              - option "铝、铁及其重要化合物"
+              - option "金属材料与应用"
+              - option "硫、氮及其化合物"
+              - option "硅及无机非金属材料"
+              - option "焓变与热化学方程式"
+              - option "盖斯定律"
+              - option "影响反应速率的因素"
+              - option "碰撞理论"
+              - option "原电池原理"
+              - option "电解原理与应用"
+              - option "化学平衡状态与特征"
+              - option "平衡移动与勒夏特列原理"
+              - option "化学平衡常数"
+              - option "化学反应方向与调控"
+              - option "弱电解质电离平衡"
+              - option "pH 与酸碱中和滴定"
+              - option "盐类水解"
+              - option "沉淀溶解平衡"
+              - option "有机物结构特点与同分异构"
+              - option "有机物的分离、提纯与鉴别"
+              - option "烷烃与烯烃"
+              - option "芳香烃"
+              - option "卤代烃"
+              - option "醇与酚"
+              - option "羧酸"
+              - option "酯与酯化反应"
+              - option "醛、酮与有机转化"
+              - option "有机合成路线初步"
+              - option "有机实验常见装置与安全"
+              - option "糖类、氨基酸与蛋白质"
+              - option "高分子材料"
+              - option "工业流程与化工生产分析"
+              - option "资源循环利用与绿色化学"
+              - option "新能源与新材料中的化学"
+              - option "环境保护中的化学问题"
+              - option "食品、药物与日用化学"
+              - option "化学风险识别与安全素养"
+          - generic [ref=e1369]:
+            - button "讲解" [ref=e1370] [cursor=pointer]:
+              - img [ref=e1371]
+              - text: 讲解
+            - button "练习" [ref=e1373] [cursor=pointer]:
+              - img [ref=e1374]
+              - text: 练习
+        - generic [ref=e1377]:
+          - generic [ref=e1378]:
+            - generic [ref=e1379]: 你
+            - paragraph [ref=e1383]:
+              - text: 学习讲解：
+              - strong [ref=e1384]: 物质分类与分散系
+              - text: · 物质分类与化学反应
+          - generic [ref=e1390]:
+            - generic [ref=e1391]: AI
+            - generic [ref=e1394]:
+              - paragraph [ref=e1395]: 同学你好，看到你认真整理的知识点，老师很欣慰。你已经有很好的基础了，我们一起来把“物质分类与分散系”这块内容理得更顺一些。
+              - paragraph [ref=e1396]:
+                - text: 首先，你列出的物质分类表格非常清晰。这里老师想请你思考一个生活小例子：
+                - strong [ref=e1397]: 厨房里的“食醋”和“纯净的醋酸（冰醋酸）”是同一种物质吗？
+              - paragraph [ref=e1398]: （停顿，给你思考时间）
+              - paragraph [ref=e1399]:
+                - text: 对啦，食醋是混合物，里面除了醋酸还有水；而冰醋酸是纯净物。这正是分类的意义——
+                - strong [ref=e1400]: 帮助我们透过现象看本质
+                - text: 。
+                - text: 那么，如果我们要给“氯化钠（食盐）”找一个“家族”，它属于
+                - strong [ref=e1401]: 单质
+                - text: 、
+                - strong [ref=e1402]: 酸
+                - text: 、
+                - strong [ref=e1403]: 碱****盐
+                - text: 呢？根据你写的定义，它由金属阳离子（
+                - code [ref=e1404]:
+                  - generic [ref=e1405]:
+                    - math [ref=e1407]:
+                      - generic [ref=e1409]:
+                        - generic [ref=e1410]: "N"
+                        - generic [ref=e1411]:
+                          - generic [ref=e1412]: a
+                          - generic [ref=e1413]: +
+                    - generic [ref=e1415]:
+                      - text: "N"
+                      - generic [ref=e1416]:
+                        - text: a
+                        - generic [ref=e1421]: +
+                - text: ）和酸根（
+                - code [ref=e1422]:
+                  - generic [ref=e1423]:
+                    - math [ref=e1425]:
+                      - generic [ref=e1427]:
+                        - generic [ref=e1428]: C
+                        - generic [ref=e1429]:
+                          - generic [ref=e1430]: l
+                          - generic [ref=e1431]: −
+                    - generic [ref=e1433]:
+                      - text: C
+                      - generic [ref=e1434]:
+                        - text: l
+                        - generic [ref=e1439]: −
+                - text: ）组成，所以它是——
+                - strong [ref=e1440]: 盐
+                - text: 。很好，你已经掌握了分类的基本规则。
+              - separator [ref=e1441]
+              - paragraph [ref=e1442]:
+                - text: 接下来是
+                - strong [ref=e1443]: 分散系
+                - text: ，它是一类“你中有我、我中有你”的体系。比如你把
+                - strong [ref=e1444]: 泥沙
+                - text: 撒进水里，谁是被分散的？谁是容纳的？
+                - text: （答案：泥沙是分散质，水是分散剂。）
+              - paragraph [ref=e1445]:
+                - strong [ref=e1446]: 核心区别
+                - text: 在于这三种分散系中
+                - strong [ref=e1447]: 分散质粒子的大小
+                - text: 不同，就像筛子上的三种东西：
+              - list [ref=e1448]:
+                - listitem [ref=e1449]:
+                  - text: 溶液：粒子非常小（<1 nm），像糖分子，能穿透滤纸，
+                  - strong [ref=e1450]: 均一、稳定
+                  - text: ，时间长了也不会沉。
+                - listitem [ref=e1451]:
+                  - text: 浊液：粒子很大（>100 nm），像沙子，静置后
+                  - strong [ref=e1452]: 会沉降
+                  - text: 。
+                - listitem [ref=e1453]:
+                  - text: 胶体：粒子刚刚好（1~100 nm），比糖分子大，比沙粒小，所以它
+                  - strong [ref=e1454]: 能透过滤纸，但不能透过半透膜
+                  - text: 。
+              - paragraph [ref=e1455]:
+                - text: 老师问你：
+                - strong [ref=e1456]: 为什么胶体会有丁达尔效应，而溶液没有？
+                - text: 你想想，丁达尔效应本质上是
+                - strong [ref=e1457]: 光被粒子散射
+                - text: 。溶液里的粒子太小，光直接穿过去；浊液粒子太大，光被挡住；只有胶体粒子大小适中，光线经过时
+                - strong [ref=e1458]:
+                  - text: 被迫“拐弯”
+                  - strong [ref=e1459]: 散射出来，形成一条光路。就像你用手电筒照进
+                  - text: 雾天
+                - text: （雾是胶体），会看到一条光柱，而照进
+                - strong [ref=e1460]: 纯净水
+                - text: 里就看不到。
+              - separator [ref=e1461]
+              - paragraph [ref=e1462]:
+                - strong [ref=e1463]: 难点辨析
+                - text: ：
+              - list [ref=e1464]:
+                - listitem [ref=e1465]:
+                  - text: “均一”通常指外观上无颗粒感，但胶体有时候看起来也很均匀（比如豆浆），所以
+                  - strong [ref=e1466]: 不能单靠“看起来是否均匀”来区分溶液和胶体
+                  - text: 。区分它们最妙的方法是
+                  - strong [ref=e1467]: 丁达尔效应
+                  - text: 。
+                - listitem [ref=e1468]:
+                  - text: 胶体粒子可以是
+                  - strong [ref=e1469]: 大分子
+                  - text: （如蛋白质），也可以是
+                  - strong [ref=e1470]: 很多小分子聚成的集合体
+                  - text: （很多
+                  - code [ref=e1471]:
+                    - generic [ref=e1472]:
+                      - math [ref=e1474]:
+                        - generic [ref=e1476]:
+                          - generic [ref=e1477]: F
+                          - generic [ref=e1478]: e
+                          - generic [ref=e1479]: (
+                          - generic [ref=e1480]: O
+                          - generic [ref=e1481]: H
+                          - generic [ref=e1482]:
+                            - generic [ref=e1483]: )
+                            - generic [ref=e1484]: "3"
+                      - generic [ref=e1486]:
+                        - text: Fe(OH
+                        - generic [ref=e1487]:
+                          - text: )
+                          - generic [ref=e1492]: "3"
+                  - text: 分子抱团成粒子）。
+              - separator [ref=e1496]
+              - paragraph [ref=e1497]:
+                - strong [ref=e1498]: 最后给你一个自查问题，请你尝试回答
+                - text: ：
+                - text: 某同学说：“将泥土放入水中搅拌后，静置一会儿，上层清液看起来透亮，所以它是溶液。”
+                - text: 请根据分散系的知识，指出这句话
+                - strong [ref=e1499]: 可能错在哪里
+                - text: 。（提示：考虑“静置”这个动作和“浊液”的特征。）
+              - paragraph [ref=e1500]: 相信你自己能分析出来，老师等你答案哦！有问题随时问。
+        - generic [ref=e1385]:
+          - textbox "输入你的化学问题... (Enter 发送)" [ref=e1386]
+          - button [disabled] [ref=e1387]:
+            - img [ref=e1501]

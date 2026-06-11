@@ -1,0 +1,22 @@
+- main [ref=e1752]:
+  - generic [ref=e1754]:
+    - generic [ref=e1755]:
+      - heading "欢迎回来" [level=1] [ref=e1756]
+      - paragraph [ref=e1757]: 使用邮箱登录后继续学习
+    - generic [ref=e1758]:
+      - generic [ref=e1759]: 邮箱
+      - generic [ref=e1760]:
+        - img
+        - textbox "your@email.com" [ref=e1761]
+    - generic [ref=e1762]:
+      - generic [ref=e1763]: 密码
+      - generic [ref=e1764]:
+        - img
+        - textbox "输入密码" [ref=e1765]
+    - button "登录" [ref=e1766] [cursor=pointer]:
+      - img [ref=e1767]
+      - text: 登录
+    - paragraph [ref=e1770]:
+      - text: 没有账号？
+      - link "注册" [ref=e1771] [cursor=pointer]:
+        - /url: /register

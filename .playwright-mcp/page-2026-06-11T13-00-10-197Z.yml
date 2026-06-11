@@ -1,0 +1,27 @@
+- main [ref=e12]:
+  - generic [ref=e108]:
+    - generic [ref=e109]:
+      - heading "创建账号" [level=1] [ref=e110]
+      - paragraph [ref=e111]: 仅支持邮箱注册，密码至少 8 位
+    - generic [ref=e112]:
+      - generic [ref=e113]: 邮箱
+      - generic [ref=e114]:
+        - img
+        - textbox "your@email.com" [ref=e115]
+    - generic [ref=e116]:
+      - generic [ref=e117]: 昵称（可选）
+      - generic [ref=e118]:
+        - img
+        - textbox "你的昵称" [ref=e119]
+    - generic [ref=e120]:
+      - generic [ref=e121]: 密码
+      - generic [ref=e122]:
+        - img
+        - textbox "至少 8 位" [ref=e123]
+    - button "注册" [ref=e124] [cursor=pointer]:
+      - img [ref=e125]
+      - text: 注册
+    - paragraph [ref=e128]:
+      - text: 已有账号？
+      - link "登录" [ref=e129] [cursor=pointer]:
+        - /url: /login

@@ -1,29 +1,38 @@
 import { FormEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ApiError } from '../lib/api';
-import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, User, UserPlus, CheckCircle } from 'lucide-react';
+import { api, ApiError } from '../lib/api';
+import { Lock, CheckCircle } from 'lucide-react';
 
-export function RegisterPage() {
-  const { register } = useAuth();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+export function ResetPasswordPage() {
+  const [params] = useSearchParams();
+  const token = params.get('token') || '';
   const [password, setPassword] = useState('');
-  const [nickname, setNickname] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [registered, setRegistered] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    if (password !== confirm) {
+      setError('两次输入的密码不一致');
+      return;
+    }
+    if (!token) {
+      setError('重置链接无效，请重新申请');
+      return;
+    }
     setLoading(true);
     try {
-      await register(email, password, nickname || undefined);
-      setRegistered(true);
+      await api<{ message: string }>('/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ token, password }),
+      });
+      setSuccess(true);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : '注册失败');
+      setError(err instanceof ApiError ? err.message : '重置失败，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -39,59 +48,22 @@ export function RegisterPage() {
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       >
         <div className="auth-header">
-          <h1>{registered ? '注册成功' : '创建账号'}</h1>
-          <p>{registered ? '请验证你的邮箱' : '仅支持邮箱注册，密码至少 8 位'}</p>
+          <h1>重置密码</h1>
+          <p>输入你的新密码</p>
         </div>
 
-        {registered ? (
-          <div className="reg-verify-notice">
-            <CheckCircle size={40} strokeWidth={1.4} className="reg-verify-icon" />
-            <p className="reg-verify-text">
-              验证邮件已发送到 <strong>{email}</strong>
-            </p>
-            <p className="reg-verify-hint">
-              请查收邮件并点击验证链接完成注册。验证后即可使用 AI 对话功能。
-            </p>
-            <button
-              type="button"
-              className="btn btn-primary reg-continue-btn"
-              onClick={() => navigate('/chemistry')}
-            >
-              先去浏览知识点
-            </button>
+        {success ? (
+          <div className="rp-success">
+            <CheckCircle size={48} strokeWidth={1.4} className="rp-success-icon" />
+            <p className="rp-success-text">密码重置成功！</p>
+            <Link to="/login" className="btn btn-primary rp-login-btn">
+              前往登录
+            </Link>
           </div>
         ) : (
           <>
             <div className="auth-field">
-              <label className="auth-label">邮箱</label>
-              <div className="auth-input-wrap">
-                <Mail size={16} strokeWidth={1.8} className="auth-input-icon" />
-                <input
-                  className="auth-input"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="auth-field">
-              <label className="auth-label">昵称（可选）</label>
-              <div className="auth-input-wrap">
-                <User size={16} strokeWidth={1.8} className="auth-input-icon" />
-                <input
-                  className="auth-input"
-                  placeholder="你的昵称"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="auth-field">
-              <label className="auth-label">密码</label>
+              <label className="auth-label">新密码</label>
               <div className="auth-input-wrap">
                 <Lock size={16} strokeWidth={1.8} className="auth-input-icon" />
                 <input
@@ -106,24 +78,33 @@ export function RegisterPage() {
               </div>
             </div>
 
+            <div className="auth-field">
+              <label className="auth-label">确认新密码</label>
+              <div className="auth-input-wrap">
+                <Lock size={16} strokeWidth={1.8} className="auth-input-icon" />
+                <input
+                  className="auth-input"
+                  type="password"
+                  placeholder="再次输入新密码"
+                  minLength={8}
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
             {error && <p className="auth-error">{error}</p>}
 
             <button className="btn btn-primary auth-submit" disabled={loading}>
               {loading ? (
-                <span className="auth-loading">注册中...</span>
+                <span className="auth-loading">重置中...</span>
               ) : (
-                <>
-                  <UserPlus size={16} strokeWidth={2} />
-                  注册
-                </>
+                '设置新密码'
               )}
             </button>
           </>
         )}
-
-        <p className="auth-footer">
-          已有账号？<Link to="/login">登录</Link>
-        </p>
       </motion.form>
 
       <style>{`
@@ -197,36 +178,25 @@ export function RegisterPage() {
           font-size: 0.95rem;
         }
         .auth-loading { opacity: 0.7; }
-        .auth-footer {
-          margin-top: 1.5rem;
+        .rp-success {
           text-align: center;
-          font-size: 0.9rem;
-          color: var(--text-muted);
+          padding: 1.5rem 0;
         }
-        .auth-footer a { color: var(--primary); font-weight: 500; }
-        .auth-footer a:hover { text-decoration: underline; }
-        .reg-verify-notice {
-          text-align: center;
-          padding: 1rem 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.75rem;
+        .rp-success-icon {
+          color: #10b981;
+          margin-bottom: 1rem;
         }
-        .reg-verify-icon { color: #10b981; }
-        .reg-verify-text {
+        .rp-success-text {
           color: var(--text);
-          font-size: 0.95rem;
+          font-size: 1.05rem;
+          font-weight: 600;
+          margin-bottom: 1.5rem;
         }
-        .reg-verify-hint {
-          color: var(--text-muted);
-          font-size: 0.85rem;
-          line-height: 1.5;
-        }
-        .reg-continue-btn {
-          margin-top: 0.75rem;
-          padding: 0.6rem 1.2rem;
+        .rp-login-btn {
+          display: inline-block;
+          padding: 0.65rem 1.5rem;
           font-size: 0.9rem;
+          text-decoration: none;
         }
       `}</style>
     </div>

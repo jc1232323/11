@@ -1,29 +1,28 @@
 import { FormEvent, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ApiError } from '../lib/api';
-import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, LogIn } from 'lucide-react';
+import { api, ApiError } from '../lib/api';
+import { ArrowLeft, Mail, Send } from 'lucide-react';
 
-export function LoginPage() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = (location.state as { from?: string })?.from ?? '/';
+export function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
-      await login(email, password);
-      navigate(from);
+      const res = await api<{ message: string }>('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      });
+      setSuccess(res.message);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : '登录失败');
+      setError(err instanceof ApiError ? err.message : '请求失败，请稍后重试');
     } finally {
       setLoading(false);
     }
@@ -39,58 +38,53 @@ export function LoginPage() {
         transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       >
         <div className="auth-header">
-          <h1>欢迎回来</h1>
-          <p>使用邮箱登录后继续学习</p>
+          <h1>忘记密码</h1>
+          <p>输入注册时使用的邮箱，我们将发送重置链接</p>
         </div>
 
-        <div className="auth-field">
-          <label className="auth-label">邮箱</label>
-          <div className="auth-input-wrap">
-            <Mail size={16} strokeWidth={1.8} className="auth-input-icon" />
-            <input
-              className="auth-input"
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+        {success ? (
+          <div className="fp-success">
+            <div className="fp-success-icon">✉️</div>
+            <p className="fp-success-text">{success}</p>
+            <p className="fp-success-hint">请检查收件箱（含垃圾邮件文件夹）</p>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="auth-field">
+              <label className="auth-label">邮箱</label>
+              <div className="auth-input-wrap">
+                <Mail size={16} strokeWidth={1.8} className="auth-input-icon" />
+                <input
+                  className="auth-input"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-        <div className="auth-field">
-          <div className="auth-label-row">
-            <label className="auth-label">密码</label>
-            <Link to="/forgot-password" className="auth-forgot-link">忘记密码？</Link>
-          </div>
-          <div className="auth-input-wrap">
-            <Lock size={16} strokeWidth={1.8} className="auth-input-icon" />
-            <input
-              className="auth-input"
-              type="password"
-              placeholder="输入密码"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-        </div>
+            {error && <p className="auth-error">{error}</p>}
 
-        {error && <p className="auth-error">{error}</p>}
-
-        <button className="btn btn-primary auth-submit" disabled={loading}>
-          {loading ? (
-            <span className="auth-loading">登录中...</span>
-          ) : (
-            <>
-              <LogIn size={16} strokeWidth={2} />
-              登录
-            </>
-          )}
-        </button>
+            <button className="btn btn-primary auth-submit" disabled={loading}>
+              {loading ? (
+                <span className="auth-loading">发送中...</span>
+              ) : (
+                <>
+                  <Send size={16} strokeWidth={2} />
+                  发送重置链接
+                </>
+              )}
+            </button>
+          </>
+        )}
 
         <p className="auth-footer">
-          没有账号？<Link to="/register">注册</Link>
+          <Link to="/login" className="fp-back-link">
+            <ArrowLeft size={14} strokeWidth={2} />
+            返回登录
+          </Link>
         </p>
       </motion.form>
 
@@ -110,22 +104,15 @@ export function LoginPage() {
           border-radius: var(--radius-xl);
           box-shadow: var(--shadow-lg);
         }
-        .auth-header {
-          margin-bottom: 2rem;
-        }
+        .auth-header { margin-bottom: 2rem; }
         .auth-header h1 {
           font-size: 1.5rem;
           font-weight: 700;
           color: var(--text);
           margin-bottom: 0.35rem;
         }
-        .auth-header p {
-          color: var(--text-muted);
-          font-size: 0.9rem;
-        }
-        .auth-field {
-          margin-bottom: 1.25rem;
-        }
+        .auth-header p { color: var(--text-muted); font-size: 0.9rem; }
+        .auth-field { margin-bottom: 1.25rem; }
         .auth-label {
           display: block;
           font-size: 0.85rem;
@@ -133,11 +120,7 @@ export function LoginPage() {
           color: var(--text-secondary);
           margin-bottom: 0.4rem;
         }
-        .auth-input-wrap {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
+        .auth-input-wrap { position: relative; display: flex; align-items: center; }
         .auth-input-icon {
           position: absolute;
           left: 0.85rem;
@@ -182,25 +165,31 @@ export function LoginPage() {
           font-size: 0.9rem;
           color: var(--text-muted);
         }
-        .auth-footer a {
-          color: var(--primary);
-          font-weight: 500;
-        }
+        .auth-footer a { color: var(--primary); font-weight: 500; }
         .auth-footer a:hover { text-decoration: underline; }
-        .auth-label-row {
-          display: flex;
-          justify-content: space-between;
+        .fp-back-link {
+          display: inline-flex;
           align-items: center;
-          margin-bottom: 0.4rem;
+          gap: 0.3rem;
         }
-        .auth-label-row .auth-label { margin-bottom: 0; }
-        .auth-forgot-link {
-          font-size: 0.82rem;
-          color: var(--primary);
-          text-decoration: none;
+        .fp-success {
+          text-align: center;
+          padding: 1.5rem 0;
+        }
+        .fp-success-icon {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+        }
+        .fp-success-text {
+          color: var(--text);
+          font-size: 0.95rem;
           font-weight: 500;
+          margin-bottom: 0.5rem;
         }
-        .auth-forgot-link:hover { text-decoration: underline; }
+        .fp-success-hint {
+          color: var(--text-muted);
+          font-size: 0.85rem;
+        }
       `}</style>
     </div>
   );

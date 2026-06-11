@@ -1,0 +1,101 @@
+- generic [ref=e130]:
+  - complementary [ref=e131]:
+    - link "化学 问答" [ref=e132] [cursor=pointer]:
+      - /url: /
+      - text: 化学
+      - generic [ref=e133]: 问答
+    - navigation [ref=e134]:
+      - link "AI 问答" [ref=e135] [cursor=pointer]:
+        - /url: /
+        - img [ref=e136]
+        - text: AI 问答
+      - link "化学知识" [ref=e138] [cursor=pointer]:
+        - /url: /chemistry
+        - img [ref=e139]
+        - text: 化学知识
+      - link "专题训练" [ref=e141] [cursor=pointer]:
+        - /url: /training
+        - img [ref=e142]
+        - text: 专题训练
+      - link "设置" [ref=e148] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e149]
+        - text: 设置
+      - link "关于" [ref=e152] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e153]
+        - text: 关于
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - img [ref=e157]
+        - text: CodexTest
+      - button "退出" [ref=e160] [cursor=pointer]:
+        - img [ref=e161]
+        - text: 退出
+  - main [ref=e1603]:
+    - generic [ref=e1604]:
+      - generic [ref=e1605]:
+        - button "返回题包列表" [ref=e1606] [cursor=pointer]:
+          - img [ref=e1607]
+          - generic [ref=e1609]: 返回题包列表
+        - generic [ref=e1610]:
+          - img [ref=e1612]
+          - generic [ref=e1614]:
+            - heading "电化学冲刺" [level=1] [ref=e1615]
+            - paragraph [ref=e1616]: 原电池与电解池核心考点集中突破
+          - generic [ref=e1617]:
+            - img [ref=e1618]
+            - generic [ref=e1621]: 4 题
+      - generic [ref=e1622]:
+        - group [ref=e1623]:
+          - generic "第 1 题 盐桥原电池的工作判断 单选题" [ref=e1624] [cursor=pointer]:
+            - generic [ref=e1625]:
+              - generic [ref=e1626]: 第 1 题
+              - generic [ref=e1627]:
+                - heading "盐桥原电池的工作判断" [level=3] [ref=e1628]
+                - paragraph [ref=e1629]: 单选题
+            - img [ref=e1630]
+          - generic [ref=e1632]:
+            - generic [ref=e1633]:
+              - heading "题目" [level=4] [ref=e1634]
+              - paragraph [ref=e1635]: 用 Zn 片、Cu 片、ZnSO4 溶液、CuSO4 溶液和盐桥组装原电池。装置工作时，下列说法正确的是：
+              - list [ref=e1636]:
+                - listitem [ref=e1637]:
+                  - generic [ref=e1638]: A.
+                  - generic [ref=e1639]: Zn 电极为正极
+                - listitem [ref=e1640]:
+                  - generic [ref=e1641]: B.
+                  - generic [ref=e1642]: 电子经盐桥由 Zn 电极流向 Cu 电极
+                - listitem [ref=e1643]:
+                  - generic [ref=e1644]: C.
+                  - generic [ref=e1645]: Cu 电极质量减小
+                - listitem [ref=e1646]:
+                  - generic [ref=e1647]: D.
+                  - generic [ref=e1648]: 盐桥中的阴离子向 ZnSO4 溶液一侧迁移
+            - button "查看答案" [ref=e1649] [cursor=pointer]:
+              - img [ref=e1650]
+              - generic [ref=e1653]: 查看答案
+        - group [ref=e1654]:
+          - generic "第 2 题 粗铜精炼中的电极变化 单选题" [ref=e1655] [cursor=pointer]:
+            - generic [ref=e1656]:
+              - generic [ref=e1657]: 第 2 题
+              - generic [ref=e1658]:
+                - heading "粗铜精炼中的电极变化" [level=3] [ref=e1659]
+                - paragraph [ref=e1660]: 单选题
+            - img [ref=e1661]
+        - group [ref=e1663]:
+          - generic "第 3 题 离子交换膜法电解食盐水 综合题" [ref=e1664] [cursor=pointer]:
+            - generic [ref=e1665]:
+              - generic [ref=e1666]: 第 3 题
+              - generic [ref=e1667]:
+                - heading "离子交换膜法电解食盐水" [level=3] [ref=e1668]
+                - paragraph [ref=e1669]: 综合题
+            - img [ref=e1670]
+        - group [ref=e1672]:
+          - generic "第 4 题 甲醇燃料电池中的电子转移 单选题" [ref=e1673] [cursor=pointer]:
+            - generic [ref=e1674]:
+              - generic [ref=e1675]: 第 4 题
+              - generic [ref=e1676]:
+                - heading "甲醇燃料电池中的电子转移" [level=3] [ref=e1677]
+                - paragraph [ref=e1678]: 单选题
+            - img [ref=e1679]

@@ -40,6 +40,7 @@ export type User = {
   email: string;
   nickname: string;
   defaultRole: RoleId;
+  emailVerified: boolean;
 };
 
 export type KnowledgeTopic = {

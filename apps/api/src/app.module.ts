@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { LlmModule } from './llm/llm.module';
 import { KnowledgeModule } from './knowledge/knowledge.module';
+import { MailModule } from './mail/mail.module';
 import { ChatMessage } from './entities/chat-message.entity';
 import { ChatSession } from './entities/chat-session.entity';
 import { KnowledgeNode } from './entities/knowledge-node.entity';
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module';
       entities: [User, KnowledgeNode, ChatSession, ChatMessage],
       synchronize: true,
     }),
+    MailModule,
     LlmModule,
     AuthModule,
     UsersModule,

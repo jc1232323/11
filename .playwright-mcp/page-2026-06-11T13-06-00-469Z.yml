@@ -1,0 +1,80 @@
+- generic [ref=e1772]:
+  - complementary [ref=e1773]:
+    - link "化学 问答" [ref=e1774] [cursor=pointer]:
+      - /url: /
+      - text: 化学
+      - generic [ref=e1775]: 问答
+    - navigation [ref=e1776]:
+      - link "AI 问答" [ref=e1777] [cursor=pointer]:
+        - /url: /
+        - img [ref=e1778]
+        - text: AI 问答
+      - link "化学知识" [ref=e1780] [cursor=pointer]:
+        - /url: /chemistry
+        - img [ref=e1781]
+        - text: 化学知识
+      - link "专题训练" [ref=e1783] [cursor=pointer]:
+        - /url: /training
+        - img [ref=e1784]
+        - text: 专题训练
+      - link "设置" [ref=e1790] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e1791]
+        - text: 设置
+      - link "关于" [ref=e1794] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e1795]
+        - text: 关于
+    - generic [ref=e1797]:
+      - generic [ref=e1798]:
+        - img [ref=e1799]
+        - text: CodexTest2
+      - button "退出" [ref=e1802] [cursor=pointer]:
+        - img [ref=e1803]
+        - text: 退出
+  - main [ref=e1807]:
+    - generic [ref=e1808]:
+      - generic [ref=e1809]:
+        - img [ref=e1811]
+        - heading "设置" [level=1] [ref=e1814]
+      - generic [ref=e1815]:
+        - generic [ref=e1816]:
+          - img [ref=e1817]
+          - heading "个人资料" [level=2] [ref=e1820]
+        - paragraph [ref=e1821]: 邮箱：codex.test.20260611.2200@example.com
+        - generic [ref=e1822]:
+          - generic [ref=e1823]: 昵称
+          - textbox [ref=e1824]: CodexTest2
+        - generic [ref=e1825]:
+          - generic [ref=e1826]: 默认 AI 角色
+          - generic [ref=e1827]:
+            - generic [ref=e1828]:
+              - combobox [ref=e1829]:
+                - option "思路直达"
+                - option "温柔老师" [selected]
+                - option "基础入门"
+                - option "公式推导"
+                - option "高考冲刺"
+                - option "审题拆题"
+                - option "记忆助手"
+                - option "错题复盘"
+                - option "实验达人"
+                - option "竞赛拓展"
+              - img
+            - paragraph [ref=e1830]: 耐心引导，用提问帮助你自己推导
+        - button "保存资料" [ref=e1831] [cursor=pointer]:
+          - img [ref=e1832]
+          - text: 保存资料
+      - generic [ref=e1836]:
+        - generic [ref=e1837]:
+          - img [ref=e1838]
+          - heading "修改密码" [level=2] [ref=e1841]
+        - generic [ref=e1842]:
+          - generic [ref=e1843]: 旧密码
+          - textbox [ref=e1844]
+        - generic [ref=e1845]:
+          - generic [ref=e1846]: 新密码（至少 8 位）
+          - textbox [ref=e1847]
+        - button "修改密码" [ref=e1848] [cursor=pointer]:
+          - img [ref=e1849]
+          - text: 修改密码

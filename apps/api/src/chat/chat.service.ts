@@ -21,6 +21,14 @@ import { CreateSessionDto } from './dto/create-session.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 1500;
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 @Injectable()
 export class ChatService {
   constructor(
@@ -84,6 +92,18 @@ export class ChatService {
     dto: SendMessageDto,
     res: Response,
   ) {
+    // Check email verification
+    if (!user.emailVerified) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.flushHeaders?.();
+      res.write(`data: ${JSON.stringify({ error: '请先验证邮箱后才能使用 AI 对话。请检查你的收件箱（含垃圾邮件），点击验证链接完成验证。' })}\n\n`);
+      res.write('data: [DONE]\n\n');
+      res.end();
+      return;
+    }
+
     const session = await this.assertSession(user.id, sessionId);
     const roleMode = dto.roleMode ?? session.roleMode;
     if (dto.roleMode) {
@@ -145,26 +165,70 @@ export class ChatService {
 
     let assistantText = '';
 
-    try {
-      const upstream = await fetch(`${llm.apiBase}/v1/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${llm.apiKey}`,
-        },
-        body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(120000),
-      });
+    // Retry logic for upstream LLM requests
+    let upstream: globalThis.Response | null = null;
+    let lastError = '';
 
-      if (!upstream.ok || !upstream.body) {
-        const errText = await upstream.text().catch(() => '上游模型请求失败');
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const response = await fetch(`${llm.apiBase}/v1/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${llm.apiKey}`,
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(120000),
+        });
+
+        if (response.ok && response.body) {
+          upstream = response;
+          break;
+        }
+
+        // Check if retryable
+        if (RETRYABLE_STATUS.has(response.status) && attempt < MAX_RETRIES) {
+          lastError = await response.text().catch(() => `HTTP ${response.status}`);
+          await sleep(RETRY_DELAY_MS * (attempt + 1));
+          continue;
+        }
+
+        // Non-retryable error or final attempt
+        const errText = await response.text().catch(() => '上游模型请求失败');
         const friendly = formatLlmError(errText);
         res.write(`data: ${JSON.stringify({ error: friendly })}\n\n`);
         res.write('data: [DONE]\n\n');
         res.end();
         return;
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : '网络请求失败';
+        if (attempt < MAX_RETRIES) {
+          lastError = msg;
+          await sleep(RETRY_DELAY_MS * (attempt + 1));
+          continue;
+        }
+        // Final attempt failed
+        const friendly = msg.includes('timeout')
+          ? 'AI 响应超时，服务器可能繁忙，请稍后重试'
+          : `连接 AI 服务失败（已重试 ${MAX_RETRIES} 次）：${msg}`;
+        res.write(`data: ${JSON.stringify({ error: friendly })}\n\n`);
+        res.write('data: [DONE]\n\n');
+        res.end();
+        return;
       }
+    }
 
+    if (!upstream || !upstream.body) {
+      const friendly = lastError
+        ? `AI 服务暂时不可用（已重试 ${MAX_RETRIES} 次）：${formatLlmError(lastError)}`
+        : 'AI 服务暂时不可用，请稍后重试';
+      res.write(`data: ${JSON.stringify({ error: friendly })}\n\n`);
+      res.write('data: [DONE]\n\n');
+      res.end();
+      return;
+    }
+
+    try {
       const reader = upstream.body.getReader();
       const decoder = new TextDecoder();
 
@@ -210,7 +274,10 @@ export class ChatService {
     } catch (e) {
       const message =
         e instanceof Error ? e.message : '对话请求失败，请稍后重试';
-      res.write(`data: ${JSON.stringify({ error: message })}\n\n`);
+      const friendly = message.includes('timeout')
+        ? 'AI 响应超时，请稍后重试'
+        : message;
+      res.write(`data: ${JSON.stringify({ error: friendly })}\n\n`);
       res.write('data: [DONE]\n\n');
       res.end();
     }

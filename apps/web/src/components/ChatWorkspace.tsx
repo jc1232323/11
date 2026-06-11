@@ -26,6 +26,9 @@ import {
   Loader2,
   MessageSquare,
   Sparkles,
+  AlertTriangle,
+  RefreshCw,
+  MailWarning,
 } from 'lucide-react';
 
 type AskMode = 'explain' | 'practice' | 'free';
@@ -42,6 +45,8 @@ export function ChatWorkspace() {
   const [streaming, setStreaming] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState('');
+  const [lastSentContent, setLastSentContent] = useState('');
+  const [resendingVerification, setResendingVerification] = useState(false);
   const [knowledgeTree, setKnowledgeTree] = useState<KnowledgeTree>([]);
   const [knowledgeSlug, setKnowledgeSlug] = useState('');
   const [askMode, setAskMode] = useState<AskMode>('free');
@@ -131,6 +136,7 @@ export function ChatWorkspace() {
       if (!content.trim() || streaming) return;
       setError('');
       setStreaming(true);
+      setLastSentContent(content.trim());
 
       const slug = options?.knowledgeSlug ?? (knowledgeSlug || undefined);
       const mode = options?.askMode ?? (slug ? askMode : 'free');
@@ -285,7 +291,7 @@ export function ChatWorkspace() {
     });
   }
 
-  const inputDisabled = initializing || streaming;
+  const inputDisabled = initializing || streaming || (user != null && !user.emailVerified);
 
   return (
     <div className="cw">
@@ -441,8 +447,57 @@ export function ChatWorkspace() {
             </AnimatePresence>
           </div>
 
-          {/* Error */}
-          {error && <p className="cw-error">{error}</p>}
+          {/* Verification Banner */}
+          {user && !user.emailVerified && (
+            <div className="cw-verify-banner">
+              <MailWarning size={18} strokeWidth={1.8} />
+              <div className="cw-verify-text">
+                <span>你的邮箱尚未验证，请查收验证邮件后才能使用 AI 对话</span>
+                <button
+                  type="button"
+                  className="cw-verify-resend"
+                  disabled={resendingVerification}
+                  onClick={async () => {
+                    setResendingVerification(true);
+                    try {
+                      await api<{ message: string }>('/auth/resend-verification', { method: 'POST' });
+                      setError('');
+                      alert('验证邮件已重新发送，请查收');
+                    } catch {
+                      alert('发送失败，请稍后重试');
+                    } finally {
+                      setResendingVerification(false);
+                    }
+                  }}
+                >
+                  {resendingVerification ? '发送中...' : '重新发送验证邮件'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Error with retry */}
+          {error && (
+            <div className="cw-error-bar">
+              <AlertTriangle size={16} strokeWidth={2} />
+              <span className="cw-error-text">{error}</span>
+              {lastSentContent && !streaming && (
+                <button
+                  type="button"
+                  className="cw-retry-btn"
+                  onClick={() => {
+                    if (activeId) {
+                      setError('');
+                      void sendMessage(lastSentContent, activeId);
+                    }
+                  }}
+                >
+                  <RefreshCw size={14} strokeWidth={2} />
+                  重试
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Composer */}
           <form className="cw-composer" onSubmit={onSend}>
@@ -773,13 +828,71 @@ export function ChatWorkspace() {
         }
 
         /* Error */
-        .cw-error {
+        .cw-error-bar {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
           color: var(--danger);
           font-size: 0.85rem;
-          padding: 0.5rem 1.25rem;
+          padding: 0.6rem 1.25rem;
           margin: 0;
-          background: rgba(239, 68, 68, 0.04);
+          background: rgba(239, 68, 68, 0.05);
+          border-top: 1px solid rgba(239, 68, 68, 0.12);
         }
+        .cw-error-text { flex: 1; }
+        .cw-retry-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          padding: 0.35rem 0.7rem;
+          border-radius: var(--radius-sm);
+          border: 1px solid rgba(239, 68, 68, 0.25);
+          background: rgba(239, 68, 68, 0.08);
+          color: var(--danger);
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all var(--duration) var(--ease);
+        }
+        .cw-retry-btn:hover {
+          background: rgba(239, 68, 68, 0.14);
+          border-color: rgba(239, 68, 68, 0.4);
+        }
+        .cw-verify-banner {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.6rem;
+          padding: 0.75rem 1.25rem;
+          background: rgba(245, 158, 11, 0.06);
+          border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+          color: #b45309;
+          font-size: 0.85rem;
+          flex-shrink: 0;
+        }
+        .cw-verify-banner svg { flex-shrink: 0; margin-top: 0.1rem; }
+        .cw-verify-text {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .cw-verify-resend {
+          padding: 0.25rem 0.6rem;
+          border-radius: var(--radius-sm);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          background: rgba(245, 158, 11, 0.1);
+          color: #b45309;
+          font-size: 0.8rem;
+          font-weight: 500;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all var(--duration) var(--ease);
+        }
+        .cw-verify-resend:hover:not(:disabled) {
+          background: rgba(245, 158, 11, 0.18);
+        }
+        .cw-verify-resend:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* Composer */
         .cw-composer {

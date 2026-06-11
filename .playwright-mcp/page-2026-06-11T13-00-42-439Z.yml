@@ -1,0 +1,484 @@
+- generic [ref=e130]:
+  - complementary [ref=e131]:
+    - link "化学 问答" [ref=e132] [cursor=pointer]:
+      - /url: /
+      - text: 化学
+      - generic [ref=e133]: 问答
+    - navigation [ref=e134]:
+      - link "AI 问答" [ref=e135] [cursor=pointer]:
+        - /url: /
+        - img [ref=e136]
+        - text: AI 问答
+      - link "化学知识" [ref=e138] [cursor=pointer]:
+        - /url: /chemistry
+        - img [ref=e139]
+        - text: 化学知识
+      - link "专题训练" [ref=e141] [cursor=pointer]:
+        - /url: /training
+        - img [ref=e142]
+        - text: 专题训练
+      - link "设置" [ref=e148] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e149]
+        - text: 设置
+      - link "关于" [ref=e152] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e153]
+        - text: 关于
+    - generic [ref=e155]:
+      - generic [ref=e156]:
+        - img [ref=e157]
+        - text: CodexTest
+      - button "退出" [ref=e160] [cursor=pointer]:
+        - img [ref=e161]
+        - text: 退出
+  - main [ref=e165]:
+    - generic [ref=e166]:
+      - generic [ref=e167]:
+        - img [ref=e169]
+        - generic [ref=e171]:
+          - heading "化学知识" [level=1] [ref=e172]
+          - paragraph [ref=e173]: 8 个模块 · 65 个知识点
+      - generic [ref=e174]:
+        - generic [ref=e175]:
+          - generic [ref=e176]:
+            - img [ref=e178]
+            - heading "化学基础" [level=2] [ref=e182]
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - heading "物质分类与化学反应" [level=3] [ref=e185]
+              - list [ref=e186]:
+                - listitem [ref=e187]:
+                  - link "物质分类与分散系" [ref=e188] [cursor=pointer]:
+                    - /url: /chemistry/matter-classification
+                    - generic [ref=e189]: 物质分类与分散系
+                    - img [ref=e190]
+                - listitem [ref=e192]:
+                  - link "化学反应基本类型" [ref=e193] [cursor=pointer]:
+                    - /url: /chemistry/chemical-reaction-types
+                    - generic [ref=e194]: 化学反应基本类型
+                    - img [ref=e195]
+            - generic [ref=e197]:
+              - heading "物质的量" [level=3] [ref=e198]
+              - list [ref=e199]:
+                - listitem [ref=e200]:
+                  - link "摩尔与阿伏伽德罗常数" [ref=e201] [cursor=pointer]:
+                    - /url: /chemistry/mol-concept
+                    - generic [ref=e202]: 摩尔与阿伏伽德罗常数
+                    - img [ref=e203]
+                - listitem [ref=e205]:
+                  - link "摩尔质量" [ref=e206] [cursor=pointer]:
+                    - /url: /chemistry/molar-mass
+                    - generic [ref=e207]: 摩尔质量
+                    - img [ref=e208]
+                - listitem [ref=e210]:
+                  - link "气体摩尔体积" [ref=e211] [cursor=pointer]:
+                    - /url: /chemistry/gas-molar-volume
+                    - generic [ref=e212]: 气体摩尔体积
+                    - img [ref=e213]
+                - listitem [ref=e215]:
+                  - link "物质的量浓度" [ref=e216] [cursor=pointer]:
+                    - /url: /chemistry/amount-concentration
+                    - generic [ref=e217]: 物质的量浓度
+                    - img [ref=e218]
+                - listitem [ref=e220]:
+                  - link "一定物质的量浓度溶液的配制" [ref=e221] [cursor=pointer]:
+                    - /url: /chemistry/solution-preparation
+                    - generic [ref=e222]: 一定物质的量浓度溶液的配制
+                    - img [ref=e223]
+            - generic [ref=e225]:
+              - heading "离子反应" [level=3] [ref=e226]
+              - list [ref=e227]:
+                - listitem [ref=e228]:
+                  - link "电解质与电离" [ref=e229] [cursor=pointer]:
+                    - /url: /chemistry/electrolyte
+                    - generic [ref=e230]: 电解质与电离
+                    - img [ref=e231]
+                - listitem [ref=e233]:
+                  - link "离子方程式" [ref=e234] [cursor=pointer]:
+                    - /url: /chemistry/ion-equations
+                    - generic [ref=e235]: 离子方程式
+                    - img [ref=e236]
+                - listitem [ref=e238]:
+                  - link "沉淀反应" [ref=e239] [cursor=pointer]:
+                    - /url: /chemistry/precipitation
+                    - generic [ref=e240]: 沉淀反应
+                    - img [ref=e241]
+                - listitem [ref=e243]:
+                  - link "氧化还原反应初步" [ref=e244] [cursor=pointer]:
+                    - /url: /chemistry/redox-intro
+                    - generic [ref=e245]: 氧化还原反应初步
+                    - img [ref=e246]
+            - generic [ref=e248]:
+              - heading "化学实验基础" [level=3] [ref=e249]
+              - list [ref=e250]:
+                - listitem [ref=e251]:
+                  - link "实验安全与基本操作" [ref=e252] [cursor=pointer]:
+                    - /url: /chemistry/lab-safety
+                    - generic [ref=e253]: 实验安全与基本操作
+                    - img [ref=e254]
+                - listitem [ref=e256]:
+                  - link "物质分离与提纯" [ref=e257] [cursor=pointer]:
+                    - /url: /chemistry/separation-purification
+                    - generic [ref=e258]: 物质分离与提纯
+                    - img [ref=e259]
+                - listitem [ref=e261]:
+                  - link "气体制备与收集" [ref=e262] [cursor=pointer]:
+                    - /url: /chemistry/gas-preparation-collection
+                    - generic [ref=e263]: 气体制备与收集
+                    - img [ref=e264]
+        - generic [ref=e266]:
+          - generic [ref=e267]:
+            - img [ref=e269]
+            - heading "物质的结构" [level=2] [ref=e273]
+          - generic [ref=e274]:
+            - generic [ref=e275]:
+              - heading "元素周期律与元素周期表" [level=3] [ref=e276]
+              - list [ref=e277]:
+                - listitem [ref=e278]:
+                  - link "元素周期表与元素周期律" [ref=e279] [cursor=pointer]:
+                    - /url: /chemistry/periodic-table-law
+                    - generic [ref=e280]: 元素周期表与元素周期律
+                    - img [ref=e281]
+                - listitem [ref=e283]:
+                  - link "元素性质递变规律" [ref=e284] [cursor=pointer]:
+                    - /url: /chemistry/element-properties-trends
+                    - generic [ref=e285]: 元素性质递变规律
+                    - img [ref=e286]
+            - generic [ref=e288]:
+              - heading "原子结构" [level=3] [ref=e289]
+              - list [ref=e290]:
+                - listitem [ref=e291]:
+                  - link "原子构成与核外电子" [ref=e292] [cursor=pointer]:
+                    - /url: /chemistry/atom-structure
+                    - generic [ref=e293]: 原子构成与核外电子
+                    - img [ref=e294]
+                - listitem [ref=e296]:
+                  - link "核外电子排布" [ref=e297] [cursor=pointer]:
+                    - /url: /chemistry/electron-configuration
+                    - generic [ref=e298]: 核外电子排布
+                    - img [ref=e299]
+                - listitem [ref=e301]:
+                  - link "同位素" [ref=e302] [cursor=pointer]:
+                    - /url: /chemistry/isotopes
+                    - generic [ref=e303]: 同位素
+                    - img [ref=e304]
+            - generic [ref=e306]:
+              - heading "化学键" [level=3] [ref=e307]
+              - list [ref=e308]:
+                - listitem [ref=e309]:
+                  - link "离子键与共价键" [ref=e310] [cursor=pointer]:
+                    - /url: /chemistry/ionic-covalent-bond
+                    - generic [ref=e311]: 离子键与共价键
+                    - img [ref=e312]
+                - listitem [ref=e314]:
+                  - link "分子极性" [ref=e315] [cursor=pointer]:
+                    - /url: /chemistry/molecular-polarity
+                    - generic [ref=e316]: 分子极性
+                    - img [ref=e317]
+            - generic [ref=e319]:
+              - heading "物质结构与性质进阶" [level=3] [ref=e320]
+              - list [ref=e321]:
+                - listitem [ref=e322]:
+                  - link "晶体类型与性质" [ref=e323] [cursor=pointer]:
+                    - /url: /chemistry/crystal-types
+                    - generic [ref=e324]: 晶体类型与性质
+                    - img [ref=e325]
+                - listitem [ref=e327]:
+                  - link "杂化轨道与分子空间结构" [ref=e328] [cursor=pointer]:
+                    - /url: /chemistry/hybridization-shape
+                    - generic [ref=e329]: 杂化轨道与分子空间结构
+                    - img [ref=e330]
+                - listitem [ref=e332]:
+                  - link "分子间作用力与氢键" [ref=e333] [cursor=pointer]:
+                    - /url: /chemistry/molecular-interactions
+                    - generic [ref=e334]: 分子间作用力与氢键
+                    - img [ref=e335]
+                - listitem [ref=e337]:
+                  - link "配合物与配位键初步" [ref=e338] [cursor=pointer]:
+                    - /url: /chemistry/coordination-compounds
+                    - generic [ref=e339]: 配合物与配位键初步
+                    - img [ref=e340]
+            - generic [ref=e342]:
+              - heading "结构分析与研究方法" [level=3] [ref=e343]
+              - list [ref=e344]:
+                - listitem [ref=e345]:
+                  - link "模型认知与谱图初步" [ref=e346] [cursor=pointer]:
+                    - /url: /chemistry/spectroscopy-models
+                    - generic [ref=e347]: 模型认知与谱图初步
+                    - img [ref=e348]
+        - generic [ref=e350]:
+          - generic [ref=e351]:
+            - img [ref=e353]
+            - heading "常见无机物及其应用" [level=2] [ref=e357]
+          - generic [ref=e358]:
+            - generic [ref=e359]:
+              - heading "钠、氯及其化合物" [level=3] [ref=e360]
+              - list [ref=e361]:
+                - listitem [ref=e362]:
+                  - link "钠及其化合物" [ref=e363] [cursor=pointer]:
+                    - /url: /chemistry/sodium-and-compounds
+                    - generic [ref=e364]: 钠及其化合物
+                    - img [ref=e365]
+                - listitem [ref=e367]:
+                  - link "氯及其化合物" [ref=e368] [cursor=pointer]:
+                    - /url: /chemistry/chlorine-and-compounds
+                    - generic [ref=e369]: 氯及其化合物
+                    - img [ref=e370]
+            - generic [ref=e372]:
+              - heading "金属及其化合物" [level=3] [ref=e373]
+              - list [ref=e374]:
+                - listitem [ref=e375]:
+                  - link "铝、铁及其重要化合物" [ref=e376] [cursor=pointer]:
+                    - /url: /chemistry/aluminum-iron-compounds
+                    - generic [ref=e377]: 铝、铁及其重要化合物
+                    - img [ref=e378]
+                - listitem [ref=e380]:
+                  - link "金属材料与应用" [ref=e381] [cursor=pointer]:
+                    - /url: /chemistry/metal-materials
+                    - generic [ref=e382]: 金属材料与应用
+                    - img [ref=e383]
+            - generic [ref=e385]:
+              - heading "非金属及其化合物" [level=3] [ref=e386]
+              - list [ref=e387]:
+                - listitem [ref=e388]:
+                  - link "硫、氮及其化合物" [ref=e389] [cursor=pointer]:
+                    - /url: /chemistry/sulfur-nitrogen-compounds
+                    - generic [ref=e390]: 硫、氮及其化合物
+                    - img [ref=e391]
+                - listitem [ref=e393]:
+                  - link "硅及无机非金属材料" [ref=e394] [cursor=pointer]:
+                    - /url: /chemistry/silicon-materials
+                    - generic [ref=e395]: 硅及无机非金属材料
+                    - img [ref=e396]
+        - generic [ref=e398]:
+          - generic [ref=e399]:
+            - img [ref=e401]
+            - heading "化学反应与能量" [level=2] [ref=e405]
+          - generic [ref=e406]:
+            - generic [ref=e407]:
+              - heading "反应热" [level=3] [ref=e408]
+              - list [ref=e409]:
+                - listitem [ref=e410]:
+                  - link "焓变与热化学方程式" [ref=e411] [cursor=pointer]:
+                    - /url: /chemistry/enthalpy
+                    - generic [ref=e412]: 焓变与热化学方程式
+                    - img [ref=e413]
+                - listitem [ref=e415]:
+                  - link "盖斯定律" [ref=e416] [cursor=pointer]:
+                    - /url: /chemistry/hess-law
+                    - generic [ref=e417]: 盖斯定律
+                    - img [ref=e418]
+            - generic [ref=e420]:
+              - heading "反应速率" [level=3] [ref=e421]
+              - list [ref=e422]:
+                - listitem [ref=e423]:
+                  - link "影响反应速率的因素" [ref=e424] [cursor=pointer]:
+                    - /url: /chemistry/rate-factors
+                    - generic [ref=e425]: 影响反应速率的因素
+                    - img [ref=e426]
+                - listitem [ref=e428]:
+                  - link "碰撞理论" [ref=e429] [cursor=pointer]:
+                    - /url: /chemistry/collision-theory
+                    - generic [ref=e430]: 碰撞理论
+                    - img [ref=e431]
+            - generic [ref=e433]:
+              - heading "原电池与电解池" [level=3] [ref=e434]
+              - list [ref=e435]:
+                - listitem [ref=e436]:
+                  - link "原电池原理" [ref=e437] [cursor=pointer]:
+                    - /url: /chemistry/galvanic-cell
+                    - generic [ref=e438]: 原电池原理
+                    - img [ref=e439]
+                - listitem [ref=e441]:
+                  - link "电解原理与应用" [ref=e442] [cursor=pointer]:
+                    - /url: /chemistry/electrolysis
+                    - generic [ref=e443]: 电解原理与应用
+                    - img [ref=e444]
+        - generic [ref=e446]:
+          - generic [ref=e447]:
+            - img [ref=e449]
+            - heading "化学反应原理" [level=2] [ref=e453]
+          - generic [ref=e455]:
+            - heading "化学平衡" [level=3] [ref=e456]
+            - list [ref=e457]:
+              - listitem [ref=e458]:
+                - link "化学平衡状态与特征" [ref=e459] [cursor=pointer]:
+                  - /url: /chemistry/equilibrium-state
+                  - generic [ref=e460]: 化学平衡状态与特征
+                  - img [ref=e461]
+              - listitem [ref=e463]:
+                - link "平衡移动与勒夏特列原理" [ref=e464] [cursor=pointer]:
+                  - /url: /chemistry/equilibrium-shift
+                  - generic [ref=e465]: 平衡移动与勒夏特列原理
+                  - img [ref=e466]
+              - listitem [ref=e468]:
+                - link "化学平衡常数" [ref=e469] [cursor=pointer]:
+                  - /url: /chemistry/equilibrium-constant
+                  - generic [ref=e470]: 化学平衡常数
+                  - img [ref=e471]
+              - listitem [ref=e473]:
+                - link "化学反应方向与调控" [ref=e474] [cursor=pointer]:
+                  - /url: /chemistry/reaction-direction
+                  - generic [ref=e475]: 化学反应方向与调控
+                  - img [ref=e476]
+        - generic [ref=e478]:
+          - generic [ref=e479]:
+            - img [ref=e481]
+            - heading "水溶液中的离子平衡" [level=2] [ref=e485]
+          - generic [ref=e486]:
+            - generic [ref=e487]:
+              - heading "电离平衡与 pH" [level=3] [ref=e488]
+              - list [ref=e489]:
+                - listitem [ref=e490]:
+                  - link "弱电解质电离平衡" [ref=e491] [cursor=pointer]:
+                    - /url: /chemistry/weak-electrolyte-ionization
+                    - generic [ref=e492]: 弱电解质电离平衡
+                    - img [ref=e493]
+                - listitem [ref=e495]:
+                  - link "pH 与酸碱中和滴定" [ref=e496] [cursor=pointer]:
+                    - /url: /chemistry/ph-and-titration
+                    - generic [ref=e497]: pH 与酸碱中和滴定
+                    - img [ref=e498]
+            - generic [ref=e500]:
+              - heading "盐类水解与沉淀溶解平衡" [level=3] [ref=e501]
+              - list [ref=e502]:
+                - listitem [ref=e503]:
+                  - link "盐类水解" [ref=e504] [cursor=pointer]:
+                    - /url: /chemistry/salt-hydrolysis
+                    - generic [ref=e505]: 盐类水解
+                    - img [ref=e506]
+                - listitem [ref=e508]:
+                  - link "沉淀溶解平衡" [ref=e509] [cursor=pointer]:
+                    - /url: /chemistry/solubility-equilibrium
+                    - generic [ref=e510]: 沉淀溶解平衡
+                    - img [ref=e511]
+        - generic [ref=e513]:
+          - generic [ref=e514]:
+            - img [ref=e516]
+            - heading "有机化学基础" [level=2] [ref=e520]
+          - generic [ref=e521]:
+            - generic [ref=e522]:
+              - heading "有机物结构与研究方法" [level=3] [ref=e523]
+              - list [ref=e524]:
+                - listitem [ref=e525]:
+                  - link "有机物结构特点与同分异构" [ref=e526] [cursor=pointer]:
+                    - /url: /chemistry/organic-structure-features
+                    - generic [ref=e527]: 有机物结构特点与同分异构
+                    - img [ref=e528]
+                - listitem [ref=e530]:
+                  - link "有机物的分离、提纯与鉴别" [ref=e531] [cursor=pointer]:
+                    - /url: /chemistry/organic-identification
+                    - generic [ref=e532]: 有机物的分离、提纯与鉴别
+                    - img [ref=e533]
+            - generic [ref=e535]:
+              - heading "烃" [level=3] [ref=e536]
+              - list [ref=e537]:
+                - listitem [ref=e538]:
+                  - link "烷烃与烯烃" [ref=e539] [cursor=pointer]:
+                    - /url: /chemistry/alkanes-alkenes
+                    - generic [ref=e540]: 烷烃与烯烃
+                    - img [ref=e541]
+                - listitem [ref=e543]:
+                  - link "芳香烃" [ref=e544] [cursor=pointer]:
+                    - /url: /chemistry/aromatic-hydrocarbons
+                    - generic [ref=e545]: 芳香烃
+                    - img [ref=e546]
+                - listitem [ref=e548]:
+                  - link "卤代烃" [ref=e549] [cursor=pointer]:
+                    - /url: /chemistry/halogenated-hydrocarbons
+                    - generic [ref=e550]: 卤代烃
+                    - img [ref=e551]
+            - generic [ref=e553]:
+              - heading "官能团" [level=3] [ref=e554]
+              - list [ref=e555]:
+                - listitem [ref=e556]:
+                  - link "醇与酚" [ref=e557] [cursor=pointer]:
+                    - /url: /chemistry/alcohols-phenols
+                    - generic [ref=e558]: 醇与酚
+                    - img [ref=e559]
+                - listitem [ref=e561]:
+                  - link "羧酸" [ref=e562] [cursor=pointer]:
+                    - /url: /chemistry/carboxylic-acids
+                    - generic [ref=e563]: 羧酸
+                    - img [ref=e564]
+                - listitem [ref=e566]:
+                  - link "酯与酯化反应" [ref=e567] [cursor=pointer]:
+                    - /url: /chemistry/esters
+                    - generic [ref=e568]: 酯与酯化反应
+                    - img [ref=e569]
+                - listitem [ref=e571]:
+                  - link "醛、酮与有机转化" [ref=e572] [cursor=pointer]:
+                    - /url: /chemistry/aldehydes-ketones
+                    - generic [ref=e573]: 醛、酮与有机转化
+                    - img [ref=e574]
+            - generic [ref=e576]:
+              - heading "有机合成与实验" [level=3] [ref=e577]
+              - list [ref=e578]:
+                - listitem [ref=e579]:
+                  - link "有机合成路线初步" [ref=e580] [cursor=pointer]:
+                    - /url: /chemistry/organic-synthesis-routes
+                    - generic [ref=e581]: 有机合成路线初步
+                    - img [ref=e582]
+                - listitem [ref=e584]:
+                  - link "有机实验常见装置与安全" [ref=e585] [cursor=pointer]:
+                    - /url: /chemistry/organic-experiment-safety
+                    - generic [ref=e586]: 有机实验常见装置与安全
+                    - img [ref=e587]
+            - generic [ref=e589]:
+              - heading "生物大分子与合成材料" [level=3] [ref=e590]
+              - list [ref=e591]:
+                - listitem [ref=e592]:
+                  - link "糖类、氨基酸与蛋白质" [ref=e593] [cursor=pointer]:
+                    - /url: /chemistry/sugars-proteins
+                    - generic [ref=e594]: 糖类、氨基酸与蛋白质
+                    - img [ref=e595]
+                - listitem [ref=e597]:
+                  - link "高分子材料" [ref=e598] [cursor=pointer]:
+                    - /url: /chemistry/polymers
+                    - generic [ref=e599]: 高分子材料
+                    - img [ref=e600]
+        - generic [ref=e602]:
+          - generic [ref=e603]:
+            - img [ref=e605]
+            - heading "化学与社会发展" [level=2] [ref=e609]
+          - generic [ref=e610]:
+            - generic [ref=e611]:
+              - heading "资源利用与工业流程" [level=3] [ref=e612]
+              - list [ref=e613]:
+                - listitem [ref=e614]:
+                  - link "工业流程与化工生产分析" [ref=e615] [cursor=pointer]:
+                    - /url: /chemistry/industrial-process-analysis
+                    - generic [ref=e616]: 工业流程与化工生产分析
+                    - img [ref=e617]
+                - listitem [ref=e619]:
+                  - link "资源循环利用与绿色化学" [ref=e620] [cursor=pointer]:
+                    - /url: /chemistry/resource-recycling
+                    - generic [ref=e621]: 资源循环利用与绿色化学
+                    - img [ref=e622]
+            - generic [ref=e624]:
+              - heading "材料、环境与能源" [level=3] [ref=e625]
+              - list [ref=e626]:
+                - listitem [ref=e627]:
+                  - link "新能源与新材料中的化学" [ref=e628] [cursor=pointer]:
+                    - /url: /chemistry/new-materials-energy
+                    - generic [ref=e629]: 新能源与新材料中的化学
+                    - img [ref=e630]
+                - listitem [ref=e632]:
+                  - link "环境保护中的化学问题" [ref=e633] [cursor=pointer]:
+                    - /url: /chemistry/environmental-chemistry
+                    - generic [ref=e634]: 环境保护中的化学问题
+                    - img [ref=e635]
+            - generic [ref=e637]:
+              - heading "生活健康与化学安全" [level=3] [ref=e638]
+              - list [ref=e639]:
+                - listitem [ref=e640]:
+                  - link "食品、药物与日用化学" [ref=e641] [cursor=pointer]:
+                    - /url: /chemistry/food-medicine-chemistry
+                    - generic [ref=e642]: 食品、药物与日用化学
+                    - img [ref=e643]
+                - listitem [ref=e645]:
+                  - link "化学风险识别与安全素养" [ref=e646] [cursor=pointer]:
+                    - /url: /chemistry/chemical-risk-awareness
+                    - generic [ref=e647]: 化学风险识别与安全素养
+                    - img [ref=e648]
