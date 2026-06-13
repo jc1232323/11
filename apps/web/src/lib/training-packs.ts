@@ -27,6 +27,33 @@ export type TrainingPack = {
   questions: TrainingQuestion[];
 };
 
+export type TrainingPackSummary = {
+  packId: TrainingPackId;
+  title: string;
+  color: string;
+  description: string;
+  tags: string[];
+  questionCount: number;
+};
+
+export type TrainingPackDetail = {
+  packId: TrainingPackId;
+  title: string;
+  color: string;
+  description: string;
+  questions: Array<{
+    id: string;
+    title: string;
+    type: TrainingQuestionType;
+    prompt: string;
+    options: Array<{ key: string; text: string }> | null;
+    answer: string;
+    analysis: string;
+    knowledgePoints: string[];
+    source: string;
+  }>;
+};
+
 export const TRAINING_SOURCE_NOTE =
   '以下题目依据历年高考全国卷、新高考卷和省级统考试题改编，保留原始考点、设问方向与常见陷阱，不直接复刻整卷文本。';
 
@@ -364,3 +391,37 @@ CH2=CHCH3 → A → HOCH2CHOHCH3
     ],
   },
 ];
+
+export function getTrainingPackSummaries(): TrainingPackSummary[] {
+  return TRAINING_PACKS.map((pack) => ({
+    packId: pack.id,
+    title: pack.title,
+    color: pack.color,
+    description: pack.description,
+    tags: pack.tags,
+    questionCount: pack.questions.length,
+  }));
+}
+
+export function getTrainingPackDetail(packId: string): TrainingPackDetail | null {
+  const pack = TRAINING_PACKS.find((item) => item.id === packId);
+  if (!pack) return null;
+
+  return {
+    packId: pack.id,
+    title: pack.title,
+    color: pack.color,
+    description: pack.description,
+    questions: pack.questions.map((question) => ({
+      id: question.id,
+      title: question.title,
+      type: question.type,
+      prompt: question.prompt,
+      options: question.options ?? null,
+      answer: question.answer,
+      analysis: question.analysis,
+      knowledgePoints: question.knowledgePoints,
+      source: question.source,
+    })),
+  };
+}

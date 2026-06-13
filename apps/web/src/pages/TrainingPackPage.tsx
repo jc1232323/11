@@ -14,27 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { api } from '../lib/api';
-import { TRAINING_PACKS } from '../lib/training-packs';
-
-type QuestionFromApi = {
-  id: string;
-  title: string;
-  type: string;
-  prompt: string;
-  options: Array<{ key: string; text: string }> | null;
-  answer: string;
-  analysis: string;
-  knowledgePoints: string[];
-  source: string;
-};
-
-type PackFromApi = {
-  packId: string;
-  title: string;
-  color: string;
-  description: string;
-  questions: QuestionFromApi[];
-};
+import { getTrainingPackDetail, type TrainingPackDetail } from '../lib/training-packs';
 
 const PACK_ICONS: Record<string, typeof Zap> = {
   electrochemistry: Zap,
@@ -46,36 +26,25 @@ const PACK_ICONS: Record<string, typeof Zap> = {
 export function TrainingPackPage() {
   const { packId } = useParams<{ packId: string }>();
   const navigate = useNavigate();
-  const [pack, setPack] = useState<PackFromApi | null>(null);
+  const [pack, setPack] = useState<TrainingPackDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [revealedAnswers, setRevealedAnswers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!packId) return;
-    api<PackFromApi>(`/training/packs/${packId}`)
-      .then(setPack)
-      .catch(() => {
-        // Fallback to static data
-        const staticPack = TRAINING_PACKS.find((p) => p.id === packId);
-        if (staticPack) {
-          setPack({
-            packId: staticPack.id,
-            title: staticPack.title,
-            color: staticPack.color,
-            description: staticPack.description,
-            questions: staticPack.questions.map((q) => ({
-              id: q.id,
-              title: q.title,
-              type: q.type,
-              prompt: q.prompt,
-              options: q.options ?? null,
-              answer: q.answer,
-              analysis: q.analysis,
-              knowledgePoints: q.knowledgePoints,
-              source: q.source,
-            })),
-          });
+    const fallbackPack = getTrainingPackDetail(packId);
+
+    api<TrainingPackDetail>(`/training/packs/${packId}`)
+      .then((data) => {
+        if (data && Array.isArray(data.questions) && data.questions.length > 0) {
+          setPack(data);
+          return;
         }
+
+        setPack(fallbackPack);
+      })
+      .catch(() => {
+        setPack(fallbackPack);
       })
       .finally(() => setLoading(false));
   }, [packId]);

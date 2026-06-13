@@ -12,19 +12,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import {
-  TRAINING_PACKS,
   TRAINING_SOURCE_NOTE,
+  getTrainingPackSummaries,
   type TrainingPackId,
+  type TrainingPackSummary,
 } from '../lib/training-packs';
-
-type PackFromApi = {
-  packId: string;
-  title: string;
-  color: string;
-  description: string;
-  tags: string[];
-  questionCount: number;
-};
 
 const staggerContainer = {
   hidden: {},
@@ -49,21 +41,22 @@ const PACK_ICONS: Record<TrainingPackId, typeof Zap> = {
 
 export function TrainingPage() {
   const navigate = useNavigate();
-  const [packs, setPacks] = useState<PackFromApi[]>([]);
+  const [packs, setPacks] = useState<TrainingPackSummary[]>(() => getTrainingPackSummaries());
 
   useEffect(() => {
-    api<PackFromApi[]>('/training/packs')
-      .then(setPacks)
+    const fallbackPacks = getTrainingPackSummaries();
+
+    api<TrainingPackSummary[]>('/training/packs')
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPacks(data);
+          return;
+        }
+
+        setPacks(fallbackPacks);
+      })
       .catch(() => {
-        // Fallback to static data if API not seeded yet
-        setPacks(TRAINING_PACKS.map((p) => ({
-          packId: p.id,
-          title: p.title,
-          color: p.color,
-          description: p.description,
-          tags: p.tags,
-          questionCount: p.questions.length,
-        })));
+        setPacks(fallbackPacks);
       });
   }, []);
 
@@ -95,6 +88,11 @@ export function TrainingPage() {
         animate="visible"
         variants={staggerContainer}
       >
+        {packs.length === 0 && (
+          <div className="training-empty-state">
+            题包数据暂未就绪，请稍后重试。
+          </div>
+        )}
         {packs.map((pack) => {
           const Icon = PACK_ICONS[pack.packId as TrainingPackId] ?? ClipboardList;
 
@@ -192,6 +190,15 @@ export function TrainingPage() {
           grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
           gap: 1.25rem;
           margin-bottom: 1.5rem;
+        }
+        .training-empty-state {
+          grid-column: 1 / -1;
+          padding: 1.25rem;
+          border: 1px dashed rgba(148, 163, 184, 0.45);
+          border-radius: var(--radius);
+          background: rgba(248, 250, 252, 0.9);
+          color: var(--text-muted);
+          text-align: center;
         }
         .training-card {
           position: relative;

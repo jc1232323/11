@@ -2,12 +2,14 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { MessageSquare, BookOpen, Dumbbell, Settings, Info, Menu, LogOut, User, Star } from 'lucide-react';
+import { MessageSquare, BookOpen, Dumbbell, Settings, Info, Menu, LogOut, User, Star, FileCheck, CalendarDays } from 'lucide-react';
 
 const sidebarNav = [
   { to: '/', label: 'AI 问答', icon: MessageSquare },
   { to: '/chemistry', label: '化学知识', icon: BookOpen },
   { to: '/training', label: '专题训练', icon: Dumbbell },
+  { to: '/exam', label: '模拟考试', icon: FileCheck },
+  { to: '/study-plan', label: '学习计划', icon: CalendarDays },
   { to: '/favorites', label: '收藏本', icon: Star },
   { to: '/settings', label: '设置', icon: Settings },
   { to: '/about', label: '关于', icon: Info },
