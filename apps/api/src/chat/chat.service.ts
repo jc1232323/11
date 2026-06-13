@@ -270,4 +270,45 @@ export class ChatService {
       res.end();
     }
   }
+
+  async exportSession(userId: string, sessionId: string, format: string) {
+    const session = await this.assertSession(userId, sessionId);
+    const msgs = await this.messages.find({
+      where: { sessionId },
+      order: { createdAt: 'ASC' },
+    });
+
+    const title = session.title || '对话记录';
+    const date = session.createdAt.toISOString().split('T')[0];
+
+    if (format === 'md') {
+      let md = `# ${title}\n\n`;
+      md += `> 导出时间：${new Date().toLocaleString('zh-CN')}\n\n---\n\n`;
+      for (const msg of msgs) {
+        const role = msg.role === 'user' ? '🧑 你' : '🤖 AI';
+        md += `### ${role}\n\n${msg.content}\n\n---\n\n`;
+      }
+      return { format: 'md', filename: `${title}-${date}.md`, content: md };
+    }
+
+    // HTML format for PDF printing
+    let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>`;
+    html += `<style>body{font-family:system-ui,sans-serif;max-width:700px;margin:2rem auto;padding:0 1rem;color:#1d1d1f;line-height:1.7}`;
+    html += `h1{font-size:1.4rem;border-bottom:1px solid #eee;padding-bottom:0.5rem}`;
+    html += `.msg{margin:1.5rem 0;padding:1rem;border-radius:8px}`;
+    html += `.user{background:#f0f4ff}.assistant{background:#f9fafb;border:1px solid #eee}`;
+    html += `.role{font-size:0.85rem;font-weight:600;margin-bottom:0.5rem;color:#555}`;
+    html += `.meta{color:#888;font-size:0.8rem;margin-bottom:1.5rem}`;
+    html += `pre{background:#f5f5f5;padding:0.8rem;border-radius:4px;overflow-x:auto;font-size:0.85rem}`;
+    html += `</style></head><body>`;
+    html += `<h1>${title}</h1><p class="meta">导出时间：${new Date().toLocaleString('zh-CN')}</p>`;
+    for (const msg of msgs) {
+      const cls = msg.role === 'user' ? 'user' : 'assistant';
+      const role = msg.role === 'user' ? '🧑 你' : '🤖 AI';
+      const content = msg.content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      html += `<div class="msg ${cls}"><div class="role">${role}</div><div>${content}</div></div>`;
+    }
+    html += `</body></html>`;
+    return { format: 'html', filename: `${title}-${date}.html`, content: html };
+  }
 }

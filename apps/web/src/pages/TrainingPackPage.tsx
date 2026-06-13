@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -10,11 +10,33 @@ import {
   EyeOff,
   FlaskConical,
   Hexagon,
+  Loader2,
   Zap,
 } from 'lucide-react';
-import { TRAINING_PACKS, type TrainingPackId } from '../lib/training-packs';
+import { api } from '../lib/api';
+import { TRAINING_PACKS } from '../lib/training-packs';
 
-const PACK_ICONS: Record<TrainingPackId, typeof Zap> = {
+type QuestionFromApi = {
+  id: string;
+  title: string;
+  type: string;
+  prompt: string;
+  options: Array<{ key: string; text: string }> | null;
+  answer: string;
+  analysis: string;
+  knowledgePoints: string[];
+  source: string;
+};
+
+type PackFromApi = {
+  packId: string;
+  title: string;
+  color: string;
+  description: string;
+  questions: QuestionFromApi[];
+};
+
+const PACK_ICONS: Record<string, typeof Zap> = {
   electrochemistry: Zap,
   experiment: FlaskConical,
   organic: Hexagon,
@@ -24,8 +46,47 @@ const PACK_ICONS: Record<TrainingPackId, typeof Zap> = {
 export function TrainingPackPage() {
   const { packId } = useParams<{ packId: string }>();
   const navigate = useNavigate();
-  const pack = TRAINING_PACKS.find((p) => p.id === packId);
+  const [pack, setPack] = useState<PackFromApi | null>(null);
+  const [loading, setLoading] = useState(true);
   const [revealedAnswers, setRevealedAnswers] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!packId) return;
+    api<PackFromApi>(`/training/packs/${packId}`)
+      .then(setPack)
+      .catch(() => {
+        // Fallback to static data
+        const staticPack = TRAINING_PACKS.find((p) => p.id === packId);
+        if (staticPack) {
+          setPack({
+            packId: staticPack.id,
+            title: staticPack.title,
+            color: staticPack.color,
+            description: staticPack.description,
+            questions: staticPack.questions.map((q) => ({
+              id: q.id,
+              title: q.title,
+              type: q.type,
+              prompt: q.prompt,
+              options: q.options ?? null,
+              answer: q.answer,
+              analysis: q.analysis,
+              knowledgePoints: q.knowledgePoints,
+              source: q.source,
+            })),
+          });
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [packId]);
+
+  if (loading) {
+    return (
+      <div className="container training-pack-page" style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+        <Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} />
+      </div>
+    );
+  }
 
   if (!pack) {
     return (
@@ -37,7 +98,7 @@ export function TrainingPackPage() {
     );
   }
 
-  const Icon = PACK_ICONS[pack.id];
+  const Icon = PACK_ICONS[pack.packId] ?? ClipboardList;
 
   const toggleAnswer = (questionId: string) => {
     setRevealedAnswers((prev) => {

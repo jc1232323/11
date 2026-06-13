@@ -4,17 +4,35 @@ import { motion } from 'framer-motion';
 import { MarkdownView } from '../components/MarkdownView';
 import type { KnowledgeAskState } from '../lib/knowledge-ask';
 import { api, type KnowledgeDetail } from '../lib/api';
-import { BookOpen, GraduationCap, ChevronLeft, ChevronRight, Loader2, Sparkles } from 'lucide-react';
+import { BookOpen, GraduationCap, ChevronLeft, ChevronRight, Loader2, Sparkles, Star } from 'lucide-react';
 
 export function ChemistryDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [detail, setDetail] = useState<KnowledgeDetail | null>(null);
+  const [favorited, setFavorited] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
     api<KnowledgeDetail>(`/knowledge/${slug}`).then(setDetail).catch(() => setDetail(null));
+    // Check favorite status
+    api<{ favorited: boolean }>(`/favorites/check/topic/${slug}`)
+      .then((r) => setFavorited(r.favorited))
+      .catch(() => {});
+    // Record view for progress tracking
+    api('/progress/view', { method: 'POST', body: JSON.stringify({ topicSlug: slug }) }).catch(() => {});
   }, [slug]);
+
+  async function toggleFavorite() {
+    if (!slug) return;
+    if (favorited) {
+      await api(`/favorites/topic/${slug}`, { method: 'DELETE' }).catch(() => {});
+      setFavorited(false);
+    } else {
+      await api('/favorites', { method: 'POST', body: JSON.stringify({ type: 'topic', targetId: slug }) }).catch(() => {});
+      setFavorited(true);
+    }
+  }
 
   function goAi(mode: KnowledgeAskState['mode']) {
     if (!detail) return;
@@ -77,7 +95,17 @@ export function ChemistryDetailPage() {
         )}
       </nav>
 
-      <h1 className="detail-title">{detail.title}</h1>
+      <div className="detail-title-row">
+        <h1 className="detail-title">{detail.title}</h1>
+        <button
+          type="button"
+          className={`detail-fav-btn ${favorited ? 'active' : ''}`}
+          onClick={toggleFavorite}
+          title={favorited ? '取消收藏' : '收藏知识点'}
+        >
+          <Star size={18} strokeWidth={1.8} fill={favorited ? 'currentColor' : 'none'} />
+        </button>
+      </div>
 
       <div className="detail-body markdown-body">
         <MarkdownView content={body} />
@@ -138,12 +166,35 @@ export function ChemistryDetailPage() {
           font-weight: 500;
         }
         .detail-sep { color: var(--border); }
+        .detail-title-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
         .detail-title {
           font-size: 1.6rem;
           font-weight: 700;
-          margin-bottom: 1.5rem;
+          margin-bottom: 0;
           color: var(--text);
         }
+        .detail-fav-btn {
+          border: 1px solid var(--border);
+          background: var(--bg-elevated);
+          color: var(--text-muted);
+          width: 36px;
+          height: 36px;
+          border-radius: var(--radius-sm);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: all var(--duration) var(--ease);
+        }
+        .detail-fav-btn:hover { border-color: #f59e0b; color: #f59e0b; }
+        .detail-fav-btn.active { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.08); }
         .detail-body {
           line-height: 1.8;
           color: var(--text-secondary);

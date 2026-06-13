@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -60,5 +61,14 @@ export class ChatController {
     @Res() res: Response,
   ) {
     return this.chat.streamReply(user, id, dto, res);
+  }
+
+  @Get('sessions/:id/export')
+  exportSession(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+    @Query('format') format: string,
+  ) {
+    return this.chat.exportSession(user.id, id, format || 'md');
   }
 }

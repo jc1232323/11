@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { KnowledgeService } from './knowledge.service';
 
@@ -10,6 +10,11 @@ export class KnowledgeController {
   @Get('tree')
   tree() {
     return this.knowledge.getTree();
+  }
+
+  @Get('search')
+  search(@Query('q') query: string) {
+    return this.knowledge.search(query || '');
   }
 
   @Get(':slug')

@@ -28,6 +28,7 @@ import {
   Sparkles,
   AlertTriangle,
   RefreshCw,
+  Download,
 } from 'lucide-react';
 
 type AskMode = 'explain' | 'practice' | 'free';
@@ -244,6 +245,34 @@ export function ChatWorkspace() {
     }
   }
 
+  async function exportChat(format: 'md' | 'pdf') {
+    if (!activeId) return;
+    try {
+      const res = await api<{ format: string; filename: string; content: string }>(
+        `/chat/sessions/${activeId}/export?format=${format}`
+      );
+      if (format === 'md') {
+        const blob = new Blob([res.content], { type: 'text/markdown;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        // Open HTML in new window for printing as PDF
+        const win = window.open('', '_blank');
+        if (win) {
+          win.document.write(res.content);
+          win.document.close();
+          setTimeout(() => win.print(), 300);
+        }
+      }
+    } catch {
+      setError('导出失败，请稍后重试');
+    }
+  }
+
   async function submitCurrentInput() {
     if (!input.trim() || streaming) return;
     let sessionId = activeId;
@@ -298,15 +327,26 @@ export function ChatWorkspace() {
         <aside className="cw-sessions">
           <div className="cw-sessions-head">
             <h2>对话</h2>
-            <button
-              type="button"
-              className="cw-new-btn"
-              onClick={newSession}
-              disabled={initializing}
-              title="新建对话"
-            >
-              <Plus size={16} strokeWidth={2} />
-            </button>
+            <div className="cw-sessions-actions">
+              <button
+                type="button"
+                className="cw-new-btn"
+                onClick={() => void exportChat('md')}
+                disabled={!activeId || messages.length === 0}
+                title="导出 Markdown"
+              >
+                <Download size={14} strokeWidth={2} />
+              </button>
+              <button
+                type="button"
+                className="cw-new-btn"
+                onClick={newSession}
+                disabled={initializing}
+                title="新建对话"
+              >
+                <Plus size={16} strokeWidth={2} />
+              </button>
+            </div>
           </div>
           <ul className="cw-sessions-list">
             <AnimatePresence initial={false}>
@@ -554,6 +594,7 @@ export function ChatWorkspace() {
           padding: 0 0.25rem;
           flex-shrink: 0;
         }
+        .cw-sessions-actions { display: flex; gap: 4px; }
         .cw-sessions-head h2 {
           font-size: 0.85rem;
           font-weight: 600;

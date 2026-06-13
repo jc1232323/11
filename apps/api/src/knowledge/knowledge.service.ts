@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Like, Repository } from 'typeorm';
 import { KnowledgeNode } from '../entities/knowledge-node.entity';
 
 @Injectable()
@@ -87,5 +87,34 @@ export class KnowledgeService {
   async getTopicBodyBySlug(slug: string): Promise<string | null> {
     const node = await this.nodes.findOne({ where: { slug, type: 'topic' } });
     return node?.mdBody ?? null;
+  }
+
+  async search(query: string) {
+    if (!query.trim()) return [];
+    const keyword = `%${query.trim()}%`;
+    const results = await this.nodes.find({
+      where: [
+        { type: 'topic', title: Like(keyword) },
+        { type: 'topic', mdBody: Like(keyword) },
+      ],
+      order: { sortOrder: 'ASC' },
+      take: 20,
+    });
+
+    // Enrich with chapter title
+    const chapterIds = [...new Set(results.map((r) => r.parentId).filter(Boolean))];
+    const chapters = chapterIds.length > 0
+      ? await this.nodes.find({ where: chapterIds.map((id) => ({ id: id! })) })
+      : [];
+    const chapterMap = new Map(chapters.map((c) => [c.id, c.title]));
+
+    return results.map((node) => ({
+      slug: node.slug,
+      title: node.title,
+      chapterTitle: node.parentId ? chapterMap.get(node.parentId) ?? null : null,
+      snippet: node.mdBody
+        ? node.mdBody.replace(/[#*`>\-\n]/g, ' ').slice(0, 80).trim() + '…'
+        : null,
+    }));
   }
 }

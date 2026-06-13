@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ClipboardList,
@@ -9,11 +10,21 @@ import {
   Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../lib/api';
 import {
   TRAINING_PACKS,
   TRAINING_SOURCE_NOTE,
   type TrainingPackId,
 } from '../lib/training-packs';
+
+type PackFromApi = {
+  packId: string;
+  title: string;
+  color: string;
+  description: string;
+  tags: string[];
+  questionCount: number;
+};
 
 const staggerContainer = {
   hidden: {},
@@ -38,6 +49,23 @@ const PACK_ICONS: Record<TrainingPackId, typeof Zap> = {
 
 export function TrainingPage() {
   const navigate = useNavigate();
+  const [packs, setPacks] = useState<PackFromApi[]>([]);
+
+  useEffect(() => {
+    api<PackFromApi[]>('/training/packs')
+      .then(setPacks)
+      .catch(() => {
+        // Fallback to static data if API not seeded yet
+        setPacks(TRAINING_PACKS.map((p) => ({
+          packId: p.id,
+          title: p.title,
+          color: p.color,
+          description: p.description,
+          tags: p.tags,
+          questionCount: p.questions.length,
+        })));
+      });
+  }, []);
 
   return (
     <div className="container training-page">
@@ -67,12 +95,12 @@ export function TrainingPage() {
         animate="visible"
         variants={staggerContainer}
       >
-        {TRAINING_PACKS.map((pack) => {
-          const Icon = PACK_ICONS[pack.id];
+        {packs.map((pack) => {
+          const Icon = PACK_ICONS[pack.packId as TrainingPackId] ?? ClipboardList;
 
           return (
             <motion.section
-              key={pack.id}
+              key={pack.packId}
               className="card training-card"
               variants={childVariant}
             >
@@ -98,11 +126,11 @@ export function TrainingPage() {
                 ))}
               </div>
               <div className="training-card-footer">
-                <span className="training-count">{pack.questions.length} 道真题改编题</span>
+                <span className="training-count">{pack.questionCount} 道真题改编题</span>
                 <button
                   type="button"
                   className="btn btn-primary training-start-btn"
-                  onClick={() => navigate(`/training/${pack.id}`)}
+                  onClick={() => navigate(`/training/${pack.packId}`)}
                 >
                   <Play size={14} strokeWidth={2.5} />
                   开始训练

@@ -5,6 +5,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AboutPage } from './pages/AboutPage';
 import { ChemistryDetailPage } from './pages/ChemistryDetailPage';
 import { ChemistryPage } from './pages/ChemistryPage';
+import FavoritesPage from './pages/FavoritesPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
@@ -53,6 +54,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <TrainingPackPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="favorites"
+          element={
+            <ProtectedRoute>
+              <FavoritesPage />
             </ProtectedRoute>
           }
         />
