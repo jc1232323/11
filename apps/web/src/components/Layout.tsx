@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { MessageSquare, BookOpen, Dumbbell, Settings, Info, Menu, LogOut, User, Star, FileCheck, CalendarDays } from 'lucide-react';
+import { MessageSquare, BookOpen, Dumbbell, Settings, Info, Menu, LogOut, User, Star, FileCheck, CalendarDays, Crown } from 'lucide-react';
 
 const sidebarNav = [
   { to: '/', label: 'AI 问答', icon: MessageSquare },
@@ -90,9 +90,15 @@ function AppShell() {
         aria-hidden
       />
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <Link to="/" className="sidebar-logo" onClick={() => setSidebarOpen(false)}>
-          化学<span>问答</span>
-        </Link>
+        <div className="sidebar-top">
+          <Link to="/" className="sidebar-logo" onClick={() => setSidebarOpen(false)}>
+            化学<span>问答</span>
+          </Link>
+          <Link to="/membership" className="sidebar-vip-btn" onClick={() => setSidebarOpen(false)}>
+            <Crown size={13} strokeWidth={2} />
+            会员
+          </Link>
+        </div>
         <nav className="sidebar-nav">
           {sidebarNav.map((item) => {
             const Icon = item.icon;

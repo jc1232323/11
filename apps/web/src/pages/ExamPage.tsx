@@ -3,6 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, AlertTriangle, Send, Loader2 } from 'lucide-react';
 import { api } from '../lib/api';
+import {
+  getFallbackExamDetail,
+  startFallbackExamAttempt,
+  submitFallbackExamAttempt,
+} from '../lib/exam-fallback';
 
 type QuestionDetail = {
   id: string;
@@ -51,6 +56,12 @@ export function ExamPage() {
       });
       navigate(`/exam/report/${result.id}`, { replace: true });
     } catch {
+      const result = submitFallbackExamAttempt(attemptId, finalAnswers);
+      if (result) {
+        navigate(`/exam/report/${result.id}`, { replace: true });
+        return;
+      }
+
       setSubmitting(false);
     }
   }, [submitting, navigate]);
@@ -74,7 +85,23 @@ export function ExamPage() {
         const remaining = Math.max(0, examData.duration * 60 - elapsed);
         setTimeLeft(Math.floor(remaining));
       } catch {
-        navigate('/exam', { replace: true });
+        const fallbackExam = getFallbackExamDetail(examId);
+        const fallbackAttempt = startFallbackExamAttempt(examId);
+
+        if (!fallbackExam || !fallbackAttempt) {
+          navigate('/exam', { replace: true });
+          return;
+        }
+
+        setExam(fallbackExam);
+        setAttempt({
+          id: fallbackAttempt.id,
+          startedAt: fallbackAttempt.startedAt,
+        });
+
+        const elapsed = (Date.now() - new Date(fallbackAttempt.startedAt).getTime()) / 1000;
+        const remaining = Math.max(0, fallbackExam.duration * 60 - elapsed);
+        setTimeLeft(Math.floor(remaining));
       } finally {
         setLoading(false);
       }

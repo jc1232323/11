@@ -12,6 +12,7 @@ import FavoritesPage from './pages/FavoritesPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { MembershipPage } from './pages/MembershipPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { SettingsPage } from './pages/SettingsPage';
@@ -98,6 +99,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <StudyPlanPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="membership"
+          element={
+            <ProtectedRoute>
+              <MembershipPage />
             </ProtectedRoute>
           }
         />

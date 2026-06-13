@@ -9,6 +9,8 @@ import {
 import { ChatSession } from './chat-session.entity';
 import type { RoleId } from '../common/role-prompts';
 
+export type PlanType = 'free' | 'monthly' | 'quarterly' | 'yearly';
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -28,6 +30,14 @@ export class User {
 
   @Column({ name: 'email_verified', default: false })
   emailVerified!: boolean;
+
+  /** Membership plan: free | monthly | quarterly | yearly */
+  @Column({ type: 'varchar', length: 16, default: 'free' })
+  plan!: PlanType;
+
+  /** When the paid plan expires (null = free forever) */
+  @Column({ name: 'plan_expires_at', type: 'datetime', nullable: true })
+  planExpiresAt!: Date | null;
 
   @Column({ name: 'reset_password_token', type: 'varchar', length: 128, nullable: true })
   resetPasswordToken!: string | null;

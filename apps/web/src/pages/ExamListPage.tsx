@@ -3,6 +3,11 @@ import { motion } from 'framer-motion';
 import { Clock, FileCheck, Play, Trophy, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import {
+  getFallbackExamPapers,
+  listFallbackExamAttempts,
+  startFallbackExamAttempt,
+} from '../lib/exam-fallback';
 
 type ExamPaper = {
   examId: string;
@@ -44,12 +49,15 @@ export function ExamListPage() {
   const [starting, setStarting] = useState<string | null>(null);
 
   useEffect(() => {
+    const fallbackPapers = getFallbackExamPapers();
+    const fallbackAttempts = listFallbackExamAttempts();
+
     Promise.all([
       api<ExamPaper[]>('/exam/papers').catch(() => []),
       api<ExamAttemptSummary[]>('/exam/attempts').catch(() => []),
     ]).then(([p, a]) => {
-      setPapers(p);
-      setAttempts(a);
+      setPapers(Array.isArray(p) && p.length > 0 ? p : fallbackPapers);
+      setAttempts(Array.isArray(a) && a.length > 0 ? a : fallbackAttempts);
       setLoading(false);
     });
   }, []);
@@ -63,6 +71,13 @@ export function ExamListPage() {
       });
       navigate(`/exam/${examId}`);
     } catch {
+      const fallbackAttempt = startFallbackExamAttempt(examId);
+      if (fallbackAttempt) {
+        setAttempts(listFallbackExamAttempts());
+        navigate(`/exam/${examId}`);
+        return;
+      }
+
       setStarting(null);
     }
   };

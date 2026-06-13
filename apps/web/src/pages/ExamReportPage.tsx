@@ -11,6 +11,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { api } from '../lib/api';
+import { getFallbackExamAttempt } from '../lib/exam-fallback';
 
 type QuestionResult = {
   questionId: string;
@@ -59,7 +60,15 @@ export function ExamReportPage() {
     if (!attemptId) return;
     api<AttemptDetail>(`/exam/attempts/${attemptId}`)
       .then(setAttempt)
-      .catch(() => navigate('/exam', { replace: true }))
+      .catch(() => {
+        const fallbackAttempt = getFallbackExamAttempt(attemptId);
+        if (fallbackAttempt) {
+          setAttempt(fallbackAttempt);
+          return;
+        }
+
+        navigate('/exam', { replace: true });
+      })
       .finally(() => setLoading(false));
   }, [attemptId, navigate]);
 
