@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Crown, FileCheck, Lock, Play, Trophy, AlertCircle } from 'lucide-react';
+import { Clock, Crown, FileCheck, Hexagon, ClipboardList, Lock, Layers, Play, Trophy, AlertCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { isPremium } from '../lib/membership';
@@ -29,9 +29,23 @@ type ExamAttemptSummary = {
   submittedAt: string | null;
 };
 
+type Category = 'comprehensive' | 'choice' | 'organic';
+
+const CATEGORIES: Array<{ key: Category; label: string; icon: typeof FileCheck; color: string }> = [
+  { key: 'comprehensive', label: '综合模拟卷', icon: Layers, color: '#4F6EF7' },
+  { key: 'choice', label: '选择题专练', icon: ClipboardList, color: '#10b981' },
+  { key: 'organic', label: '有机推断', icon: Hexagon, color: '#8b5cf6' },
+];
+
+function getCategory(examId: string): Category {
+  if (examId.startsWith('choice-sprint')) return 'choice';
+  if (examId.startsWith('organic-focus')) return 'organic';
+  return 'comprehensive';
+}
+
 const staggerContainer = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
+  visible: { transition: { staggerChildren: 0.06 } },
 };
 
 const childVariant = {
@@ -39,7 +53,7 @@ const childVariant = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as const },
+    transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] as const },
   },
 };
 
@@ -50,6 +64,7 @@ export function ExamListPage() {
   const [attempts, setAttempts] = useState<ExamAttemptSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<Category>('comprehensive');
 
   // Premium gate
   if (!isPremium(user)) {
@@ -134,76 +149,141 @@ export function ExamListPage() {
         </div>
       </motion.header>
 
-      {papers.length === 0 ? (
+      {/* Category Tabs */}
+      <div className="exam-tabs">
+        {CATEGORIES.map((cat) => {
+          const Icon = cat.icon;
+          const count = papers.filter((p) => getCategory(p.examId) === cat.key).length;
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              className={`exam-tab ${activeCategory === cat.key ? 'active' : ''}`}
+              onClick={() => setActiveCategory(cat.key)}
+              style={{ '--tab-color': cat.color } as React.CSSProperties}
+            >
+              <Icon size={16} strokeWidth={1.8} />
+              <span>{cat.label}</span>
+              <span className="exam-tab-count">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {papers.filter((p) => getCategory(p.examId) === activeCategory).length === 0 ? (
         <div className="exam-empty">
           <AlertCircle size={40} strokeWidth={1.4} />
-          <p>暂无试卷，请先运行种子脚本导入试卷数据</p>
+          <p>该分类暂无试卷</p>
         </div>
       ) : (
         <motion.div
           className="exam-grid"
+          key={activeCategory}
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
-          {papers.map((paper) => {
-            const best = getBestScore(paper.examId);
-            const history = getAttemptHistory(paper.examId);
-            return (
-              <motion.section
-                key={paper.examId}
-                className="card exam-card"
-                variants={childVariant}
-              >
-                <div className="exam-card-head">
-                  <div className="exam-card-icon">
-                    <FileCheck size={20} strokeWidth={1.8} />
-                  </div>
-                  <div className="exam-card-title-wrap">
-                    <h3>{paper.title}</h3>
-                    <div className="exam-card-meta">
-                      <span><Clock size={13} /> {paper.duration} 分钟</span>
-                      <span>{paper.questions.length} 题</span>
-                      <span>满分 {paper.totalScore}</span>
+          {papers
+            .filter((p) => getCategory(p.examId) === activeCategory)
+            .map((paper) => {
+              const best = getBestScore(paper.examId);
+              const history = getAttemptHistory(paper.examId);
+              const cat = CATEGORIES.find((c) => c.key === activeCategory)!;
+              return (
+                <motion.section
+                  key={paper.examId}
+                  className="card exam-card"
+                  variants={childVariant}
+                >
+                  <div className="exam-card-head">
+                    <div className="exam-card-icon" style={{ background: `${cat.color}12`, color: cat.color }}>
+                      <cat.icon size={20} strokeWidth={1.8} />
+                    </div>
+                    <div className="exam-card-title-wrap">
+                      <h3>{paper.title}</h3>
+                      <div className="exam-card-meta">
+                        <span><Clock size={13} /> {paper.duration} 分钟</span>
+                        <span>{paper.questions.length} 题</span>
+                        <span>满分 {paper.totalScore}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <p className="exam-card-desc">{paper.description}</p>
+                  <p className="exam-card-desc">{paper.description}</p>
 
-                {best !== null && (
-                  <div className="exam-card-best">
-                    <Trophy size={14} strokeWidth={2} />
-                    <span>最高分：{best}/{paper.totalScore}（共考 {history.length} 次）</span>
-                  </div>
-                )}
+                  {best !== null && (
+                    <div className="exam-card-best">
+                      <Trophy size={14} strokeWidth={2} />
+                      <span>最高分：{best}/{paper.totalScore}（共考 {history.length} 次）</span>
+                    </div>
+                  )}
 
-                <div className="exam-card-footer">
-                  <button
-                    type="button"
-                    className="btn btn-primary exam-start-btn"
-                    disabled={starting === paper.examId}
-                    onClick={() => handleStart(paper.examId)}
-                  >
-                    <Play size={14} strokeWidth={2.5} />
-                    {starting === paper.examId ? '进入中...' : '开始考试'}
-                  </button>
-                  {history.length > 0 && (
+                  <div className="exam-card-footer">
                     <button
                       type="button"
-                      className="btn btn-ghost exam-history-btn"
-                      onClick={() => navigate(`/exam/report/${history[0].id}`)}
+                      className="btn btn-primary exam-start-btn"
+                      disabled={starting === paper.examId}
+                      onClick={() => handleStart(paper.examId)}
                     >
-                      查看最近报告
+                      <Play size={14} strokeWidth={2.5} />
+                      {starting === paper.examId ? '进入中...' : '开始考试'}
                     </button>
-                  )}
-                </div>
-              </motion.section>
-            );
-          })}
+                    {history.length > 0 && (
+                      <button
+                        type="button"
+                        className="btn btn-ghost exam-history-btn"
+                        onClick={() => navigate(`/exam/report/${history[0].id}`)}
+                      >
+                        查看最近报告
+                      </button>
+                    )}
+                  </div>
+                </motion.section>
+              );
+            })}
         </motion.div>
       )}
       <style>{`
         .exam-list-page { padding-bottom: 2rem; }
+        .exam-tabs {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+        }
+        .exam-tab {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.55rem 1rem;
+          border-radius: var(--radius);
+          border: 1.5px solid var(--border);
+          background: var(--bg-elevated);
+          color: var(--text-secondary);
+          font-size: 0.88rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all var(--duration) var(--ease);
+        }
+        .exam-tab:hover {
+          border-color: var(--tab-color, var(--primary));
+          color: var(--tab-color, var(--primary));
+        }
+        .exam-tab.active {
+          border-color: var(--tab-color, var(--primary));
+          background: color-mix(in srgb, var(--tab-color, var(--primary)) 8%, transparent);
+          color: var(--tab-color, var(--primary));
+        }
+        .exam-tab-count {
+          font-size: 0.72rem;
+          background: var(--bg-subtle);
+          padding: 0.1rem 0.4rem;
+          border-radius: 999px;
+          color: var(--text-muted);
+        }
+        .exam-tab.active .exam-tab-count {
+          background: color-mix(in srgb, var(--tab-color, var(--primary)) 15%, transparent);
+          color: var(--tab-color, var(--primary));
+        }
         .exam-header {
           display: flex;
           align-items: center;
