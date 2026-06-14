@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, AlertTriangle, Send, Loader2 } from 'lucide-react';
 import { api } from '../lib/api';
+import { ChemText } from '../components/ChemText';
 import {
   getFallbackExamDetail,
   startFallbackExamAttempt,
@@ -208,7 +209,7 @@ export function ExamPage() {
               <span className="exam-question-type">{current.type}</span>
               <span className="exam-question-score">（{current.score} 分）</span>
             </div>
-            <p className="exam-question-prompt">{current.prompt}</p>
+            <p className="exam-question-prompt"><ChemText text={current.prompt} /></p>
 
             {current.type === '单选题' && current.options ? (
               <div className="exam-options">
@@ -225,7 +226,7 @@ export function ExamPage() {
                       onChange={() => setAnswer(current.id, opt.key)}
                     />
                     <span className="exam-option-key">{opt.key}</span>
-                    <span className="exam-option-text">{opt.text}</span>
+                    <span className="exam-option-text"><ChemText text={opt.text} /></span>
                   </label>
                 ))}
               </div>

@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { api } from '../lib/api';
+import { ChemText } from '../components/ChemText';
 import { getTrainingPackDetail, type TrainingPackDetail } from '../lib/training-packs';
 
 const PACK_ICONS: Record<string, typeof Zap> = {
@@ -136,13 +137,13 @@ export function TrainingPackPage() {
               <div className="training-question-body">
                 <div className="training-question-block">
                   <h4>题目</h4>
-                  <p className="training-question-text">{question.prompt}</p>
+                  <p className="training-question-text"><ChemText text={question.prompt} /></p>
                   {question.options && (
                     <ul className="training-options">
                       {question.options.map((option) => (
                         <li key={option.key}>
                           <span className="training-option-key">{option.key}.</span>
-                          <span>{option.text}</span>
+                          <span><ChemText text={option.text} /></span>
                         </li>
                       ))}
                     </ul>
@@ -170,11 +171,11 @@ export function TrainingPackPage() {
                     <div className="training-answer-grid">
                       <div className="training-question-block training-answer-card">
                         <h4>答案</h4>
-                        <p className="training-answer-text">{question.answer}</p>
+                        <p className="training-answer-text"><ChemText text={question.answer} /></p>
                       </div>
                       <div className="training-question-block training-source-card">
                         <h4>来源</h4>
-                        <p>{question.source}</p>
+                        <p><ChemText text={question.source} /></p>
                         <div className="training-points">
                           {question.knowledgePoints.map((point) => (
                             <span key={point} className="training-point">{point}</span>
@@ -184,7 +185,7 @@ export function TrainingPackPage() {
                     </div>
                     <div className="training-question-block">
                       <h4>解析</h4>
-                      <p className="training-question-text">{question.analysis}</p>
+                      <p className="training-question-text"><ChemText text={question.analysis} /></p>
                     </div>
                   </motion.div>
                 )}

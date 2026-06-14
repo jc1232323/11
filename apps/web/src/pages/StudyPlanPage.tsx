@@ -1,11 +1,16 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { api, ApiError } from '../lib/api';
+import { isPremium } from '../lib/membership';
+import { useAuth } from '../context/AuthContext';
 import {
   CalendarDays,
   BookOpen,
+  Crown,
   Target,
   GraduationCap,
+  Lock,
   Loader2,
   RefreshCw,
   Clock,
@@ -32,6 +37,7 @@ type StudyPlanData = {
 };
 
 export function StudyPlanPage() {
+  const { user } = useAuth();
   const [plan, setPlan] = useState<StudyPlanData | null>(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -89,6 +95,21 @@ export function StudyPlanPage() {
     try {
       days = JSON.parse(plan.planContent);
     } catch { /* ignore */ }
+  }
+
+  // Premium gate
+  if (!isPremium(user)) {
+    return (
+      <div className="container sp-page" style={{ paddingTop: '3rem', textAlign: 'center' }}>
+        <Lock size={48} strokeWidth={1.4} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
+        <h2 style={{ fontSize: '1.3rem', color: 'var(--text)', marginBottom: '0.5rem' }}>个性化学习计划为会员专属功能</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>升级会员后 AI 将为你量身定制 30 天学习计划</p>
+        <Link to="/membership" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+          <Crown size={16} strokeWidth={2} />
+          升级会员
+        </Link>
+      </div>
+    );
   }
 
   if (loading) {

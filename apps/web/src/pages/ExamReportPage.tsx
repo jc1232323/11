@@ -11,6 +11,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { api } from '../lib/api';
+import { ChemText } from '../components/ChemText';
 import { getFallbackExamAttempt } from '../lib/exam-fallback';
 
 type QuestionResult = {
@@ -206,8 +207,8 @@ export function ExamReportPage() {
                 </div>
                 {!result.correct && (
                   <div className="report-q-detail">
-                    <p><span className="report-q-label">你的答案：</span>{result.userAnswer || '（未作答）'}</p>
-                    <p><span className="report-q-label">正确答案：</span>{result.correctAnswer}</p>
+                    <p><span className="report-q-label">你的答案：</span><ChemText text={result.userAnswer || '（未作答）'} /></p>
+                    <p><span className="report-q-label">正确答案：</span><ChemText text={result.correctAnswer} /></p>
                   </div>
                 )}
               </div>

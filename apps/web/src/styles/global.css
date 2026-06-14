@@ -211,6 +211,26 @@ button, input, textarea, select {
   font-size: 1em;
 }
 
+.chem-text {
+  font-variant-numeric: lining-nums;
+}
+
+.chem-text sub,
+.chem-text sup {
+  font-size: 0.72em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.chem-text sup {
+  top: -0.45em;
+}
+
+.chem-text sub {
+  bottom: -0.18em;
+}
+
 /* ===== App Shell & Sidebar ===== */
 .app-shell {
   display: flex;

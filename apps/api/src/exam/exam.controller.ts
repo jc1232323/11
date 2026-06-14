@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
+import { User } from '../entities/user.entity';
+import { isPremium } from '../common/membership';
 import { ExamService } from './exam.service';
 
 @Controller('exam')
@@ -20,15 +22,18 @@ export class ExamController {
 
   @Post('start')
   startAttempt(
-    @CurrentUser() user: { id: string },
+    @CurrentUser() user: User,
     @Body('examId') examId: string,
   ) {
+    if (!isPremium(user)) {
+      throw new ForbiddenException('模拟考试为会员专属功能，请升级会员');
+    }
     return this.examService.startAttempt(user.id, examId);
   }
 
   @Post('submit')
   submitAttempt(
-    @CurrentUser() user: { id: string },
+    @CurrentUser() user: User,
     @Body('attemptId') attemptId: string,
     @Body('answers') answers: Record<string, string>,
   ) {
@@ -36,13 +41,13 @@ export class ExamController {
   }
 
   @Get('attempts')
-  listMyAttempts(@CurrentUser() user: { id: string }) {
+  listMyAttempts(@CurrentUser() user: User) {
     return this.examService.listMyAttempts(user.id);
   }
 
   @Get('attempts/:attemptId')
   getAttempt(
-    @CurrentUser() user: { id: string },
+    @CurrentUser() user: User,
     @Param('attemptId') attemptId: string,
   ) {
     return this.examService.getAttempt(attemptId, user.id);

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -14,6 +15,7 @@ import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { User } from '../entities/user.entity';
+import { isPremium } from '../common/membership';
 import { ChatService } from './chat.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { SendMessageDto } from './dto/send-message.dto';
@@ -69,6 +71,9 @@ export class ChatController {
     @Param('id') id: string,
     @Query('format') format: string,
   ) {
+    if (!isPremium(user)) {
+      throw new ForbiddenException('导出对话为会员专属功能，请升级会员');
+    }
     return this.chat.exportSession(user.id, id, format || 'md');
   }
 }

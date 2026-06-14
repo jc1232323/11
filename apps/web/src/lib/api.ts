@@ -41,6 +41,8 @@ export type User = {
   nickname: string;
   defaultRole: RoleId;
   emailVerified: boolean;
+  plan: 'free' | 'monthly' | 'quarterly' | 'yearly';
+  planExpiresAt: string | null;
 };
 
 export type KnowledgeTopic = {

@@ -4,9 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { Response } from 'express';
-import { Repository } from 'typeorm';
 import { formatLlmError } from '../common/llm-error';
+import { isPremium, FREE_LIMITS } from '../common/membership';
 import {
   buildKnowledgeLlmContent,
   type AskMode,
@@ -92,6 +93,42 @@ export class ChatService {
     dto: SendMessageDto,
     res: Response,
   ) {
+    // Free user daily chat limit
+    if (!isPremium(user)) {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayCount = await this.messages.count({
+        where: {
+          sessionId,
+          role: 'user' as const,
+          createdAt: MoreThanOrEqual(todayStart),
+        },
+      });
+      // Count across ALL user sessions
+      const userSessions = await this.sessions.find({ where: { userId: user.id }, select: ['id'] });
+      const sessionIds = userSessions.map((s) => s.id);
+      let totalToday = 0;
+      if (sessionIds.length > 0) {
+        totalToday = await this.messages
+          .createQueryBuilder('m')
+          .innerJoin('chat_sessions', 's', 's.id = m.session_id')
+          .where('s.user_id = :userId', { userId: user.id })
+          .andWhere('m.role = :role', { role: 'user' })
+          .andWhere('m.created_at >= :start', { start: todayStart })
+          .getCount();
+      }
+      if (totalToday >= FREE_LIMITS.dailyChatMessages) {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.flushHeaders?.();
+        res.write(`data: ${JSON.stringify({ error: `今日免费对话次数已用完（${FREE_LIMITS.dailyChatMessages}次/天）。升级会员可无限对话。` })}\n\n`);
+        res.write('data: [DONE]\n\n');
+        res.end();
+        return;
+      }
+    }
+
     const session = await this.assertSession(user.id, sessionId);
     const roleMode = dto.roleMode ?? session.roleMode;
     if (dto.roleMode) {

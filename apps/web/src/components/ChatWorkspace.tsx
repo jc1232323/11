@@ -16,6 +16,7 @@ import {
   type KnowledgeAskState,
 } from '../lib/knowledge-ask';
 import { DEFAULT_ROLE, getRoleMeta, type RoleId } from '../lib/roles';
+import { isPremium, FREE_LIMITS } from '../lib/membership';
 import { useAuth } from '../context/AuthContext';
 import {
   Plus,
@@ -328,15 +329,17 @@ export function ChatWorkspace() {
           <div className="cw-sessions-head">
             <h2>对话</h2>
             <div className="cw-sessions-actions">
-              <button
-                type="button"
-                className="cw-new-btn"
-                onClick={() => void exportChat('md')}
-                disabled={!activeId || messages.length === 0}
-                title="导出 Markdown"
-              >
-                <Download size={14} strokeWidth={2} />
-              </button>
+              {isPremium(user) && (
+                <button
+                  type="button"
+                  className="cw-new-btn"
+                  onClick={() => void exportChat('md')}
+                  disabled={!activeId || messages.length === 0}
+                  title="导出 Markdown"
+                >
+                  <Download size={14} strokeWidth={2} />
+                </button>
+              )}
               <button
                 type="button"
                 className="cw-new-btn"
@@ -505,6 +508,14 @@ export function ChatWorkspace() {
                   重试
                 </button>
               )}
+            </div>
+          )}
+
+          {/* Free user limit hint */}
+          {!isPremium(user) && (
+            <div className="cw-free-hint">
+              免费版每日 {FREE_LIMITS.dailyChatMessages} 次对话 ·
+              <a href="/membership" className="cw-free-upgrade">升级会员</a>
             </div>
           )}
 
@@ -869,6 +880,23 @@ export function ChatWorkspace() {
           background: rgba(239, 68, 68, 0.14);
           border-color: rgba(239, 68, 68, 0.4);
         }
+
+        /* Free user hint */
+        .cw-free-hint {
+          text-align: center;
+          font-size: 0.78rem;
+          color: var(--text-muted);
+          padding: 0.4rem 1rem;
+          background: rgba(245, 158, 11, 0.05);
+          border-top: 1px solid rgba(245, 158, 11, 0.1);
+        }
+        .cw-free-upgrade {
+          color: var(--primary);
+          font-weight: 500;
+          margin-left: 0.3rem;
+          text-decoration: none;
+        }
+        .cw-free-upgrade:hover { text-decoration: underline; }
 
         /* Composer */
         .cw-composer {

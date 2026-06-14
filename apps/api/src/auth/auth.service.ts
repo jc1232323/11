@@ -138,6 +138,8 @@ export class AuthService {
       nickname: user.nickname,
       defaultRole: user.defaultRole,
       emailVerified: user.emailVerified,
+      plan: user.plan,
+      planExpiresAt: user.planExpiresAt?.toISOString() ?? null,
     };
   }
 }

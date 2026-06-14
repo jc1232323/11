@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, FileCheck, Play, Trophy, AlertCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Clock, Crown, FileCheck, Lock, Play, Trophy, AlertCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import { isPremium } from '../lib/membership';
+import { useAuth } from '../context/AuthContext';
 import {
   getFallbackExamPapers,
   listFallbackExamAttempts,
@@ -42,11 +44,27 @@ const childVariant = {
 };
 
 export function ExamListPage() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [papers, setPapers] = useState<ExamPaper[]>([]);
   const [attempts, setAttempts] = useState<ExamAttemptSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState<string | null>(null);
+
+  // Premium gate
+  if (!isPremium(user)) {
+    return (
+      <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
+        <Lock size={48} strokeWidth={1.4} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
+        <h2 style={{ fontSize: '1.3rem', color: 'var(--text)', marginBottom: '0.5rem' }}>模拟考试为会员专属功能</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>升级会员后可无限次参加模拟考试</p>
+        <Link to="/membership" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+          <Crown size={16} strokeWidth={2} />
+          升级会员
+        </Link>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const fallbackPapers = getFallbackExamPapers();
