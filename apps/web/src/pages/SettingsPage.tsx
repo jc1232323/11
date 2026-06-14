@@ -4,7 +4,9 @@ import { RoleSelector } from '../components/RoleSelector';
 import { ApiError, api } from '../lib/api';
 import { DEFAULT_ROLE, type RoleId } from '../lib/roles';
 import { useAuth } from '../context/AuthContext';
-import { Settings, User, Lock, Save, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { t } from '../lib/i18n';
+import { Settings, User, Lock, Save, CheckCircle2, Moon, Sun, Globe } from 'lucide-react';
 
 type Profile = {
   email: string;
@@ -14,6 +16,7 @@ type Profile = {
 
 export function SettingsPage() {
   const { user, refresh } = useAuth();
+  const { theme, toggleTheme, locale, setLocale } = useTheme();
   const [defaultRole, setDefaultRole] = useState<RoleId>(DEFAULT_ROLE);
   const [nickname, setNickname] = useState('');
   const [oldPassword, setOldPassword] = useState('');
@@ -120,10 +123,10 @@ export function SettingsPage() {
       >
         <div className="settings-card-head">
           <Lock size={18} strokeWidth={1.8} />
-          <h2>修改密码</h2>
+          <h2>{t('settings.changePassword')}</h2>
         </div>
         <div className="settings-field">
-          <label className="label">旧密码</label>
+          <label className="label">{t('settings.oldPassword')}</label>
           <input
             className="input"
             type="password"
@@ -132,7 +135,7 @@ export function SettingsPage() {
           />
         </div>
         <div className="settings-field">
-          <label className="label">新密码（至少 8 位）</label>
+          <label className="label">{t('settings.newPassword')}</label>
           <input
             className="input"
             type="password"
@@ -143,9 +146,63 @@ export function SettingsPage() {
         </div>
         <button type="submit" className="btn btn-ghost">
           <Lock size={15} strokeWidth={2} />
-          修改密码
+          {t('settings.changePasswordBtn')}
         </button>
       </motion.form>
+
+      {/* Dark Mode */}
+      <motion.div
+        className="card settings-card"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+      >
+        <div className="settings-card-head">
+          {theme === 'dark' ? <Moon size={18} strokeWidth={1.8} /> : <Sun size={18} strokeWidth={1.8} />}
+          <h2>{t('settings.appearance')}</h2>
+        </div>
+        <div className="settings-toggle-row">
+          <div className="settings-toggle-info">
+            <span className="settings-toggle-label">{t('settings.darkMode')}</span>
+            <span className="settings-toggle-desc">{t('settings.darkModeDesc')}</span>
+          </div>
+          <button
+            type="button"
+            className={`settings-switch ${theme === 'dark' ? 'active' : ''}`}
+            onClick={toggleTheme}
+            aria-label="Toggle dark mode"
+          >
+            <span className="settings-switch-thumb" />
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Language */}
+      <motion.div
+        className="card settings-card"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.4 }}
+      >
+        <div className="settings-card-head">
+          <Globe size={18} strokeWidth={1.8} />
+          <h2>{t('settings.languageTitle')}</h2>
+        </div>
+        <div className="settings-toggle-row">
+          <div className="settings-toggle-info">
+            <span className="settings-toggle-label">{t('settings.language')}</span>
+            <span className="settings-toggle-desc">{t('settings.languageDesc')}</span>
+          </div>
+          <select
+            className="input settings-lang-select"
+            value={locale}
+            onChange={(e) => setLocale(e.target.value as 'zh' | 'en')}
+          >
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </motion.div>
 
       <style>{`
         .settings-page { max-width: 560px; padding-bottom: 2rem; }
@@ -198,6 +255,60 @@ export function SettingsPage() {
           margin-bottom: 1rem;
         }
         .settings-field { margin-bottom: 1rem; }
+        .settings-toggle-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+        .settings-toggle-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+        }
+        .settings-toggle-label {
+          font-size: 0.92rem;
+          font-weight: 500;
+          color: var(--text);
+        }
+        .settings-toggle-desc {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+        }
+        .settings-switch {
+          position: relative;
+          width: 44px;
+          height: 24px;
+          border-radius: 12px;
+          border: none;
+          background: var(--border);
+          cursor: pointer;
+          transition: background 0.2s;
+          flex-shrink: 0;
+        }
+        .settings-switch.active {
+          background: var(--primary);
+        }
+        .settings-switch-thumb {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #fff;
+          transition: transform 0.2s;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .settings-switch.active .settings-switch-thumb {
+          transform: translateX(20px);
+        }
+        .settings-lang-select {
+          width: auto;
+          min-width: 120px;
+          padding: 0.45rem 0.75rem;
+          font-size: 0.88rem;
+        }
       `}</style>
     </div>
   );

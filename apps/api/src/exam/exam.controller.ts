@@ -52,4 +52,12 @@ export class ExamController {
   ) {
     return this.examService.getAttempt(attemptId, user.id);
   }
+
+  @Post('gaokao-upload')
+  uploadGaokaoQuestions(
+    @CurrentUser() user: User,
+    @Body() body: { examId: string; questions: Array<Record<string, unknown>> },
+  ) {
+    return this.examService.uploadGaokaoQuestions(user.id, body.examId, body.questions);
+  }
 }

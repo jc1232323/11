@@ -1,5 +1,6 @@
 import { TRAINING_PACKS, type TrainingQuestion, type TrainingQuestionType } from './training-packs';
 import { COMPREHENSIVE_QUESTIONS, CHOICE_ONLY_QUESTIONS, ORGANIC_QUESTIONS, type ExamQuestion } from './exam-questions';
+import { GAOKAO_PAPERS } from './gaokao-papers';
 
 type ExamQuestionScore = {
   questionId: string;
@@ -160,7 +161,33 @@ const FALLBACK_EXAM_PAPERS: FallbackExamPaper[] = [
   ...buildComprehensivePapers(),
   ...buildChoicePapers(),
   ...buildOrganicPapers(),
+  // Gaokao papers (only include those that have questions filled in)
+  ...GAOKAO_PAPERS
+    .filter((p) => p.questions.length > 0)
+    .map((p) => ({
+      examId: p.examId,
+      title: p.title,
+      description: p.description,
+      duration: p.duration,
+      totalScore: p.totalScore,
+      questions: p.questions.map((q) => ({ questionId: q.id, score: q.type === '单选题' ? 6 : 14 })),
+    })),
 ];
+
+/** Expose gaokao papers metadata (including empty ones for UI listing) */
+export function getGaokaoPaperList() {
+  return GAOKAO_PAPERS.map((p) => ({
+    examId: p.examId,
+    title: p.title,
+    description: p.description,
+    duration: p.duration,
+    totalScore: p.totalScore,
+    year: p.year,
+    region: p.region,
+    questionCount: p.questions.length,
+    questions: p.questions.map((q) => ({ questionId: q.id, score: q.type === '单选题' ? 6 : 14 })),
+  }));
+}
 
 function isBrowser() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';

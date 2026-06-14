@@ -10,6 +10,7 @@ import { ExamPage } from './pages/ExamPage';
 import { ExamReportPage } from './pages/ExamReportPage';
 import FavoritesPage from './pages/FavoritesPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { GaokaoUploadPage } from './pages/GaokaoUploadPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { MembershipPage } from './pages/MembershipPage';
@@ -83,6 +84,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ExamReportPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="exam/upload"
+          element={
+            <ProtectedRoute>
+              <GaokaoUploadPage />
             </ProtectedRoute>
           }
         />

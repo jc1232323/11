@@ -51,6 +51,39 @@
   --duration: 0.2s;
 }
 
+/* ===== Dark Theme ===== */
+[data-theme="dark"] {
+  --primary: #6b8aff;
+  --primary-hover: #5a7af5;
+  --primary-light: rgba(107, 138, 255, 0.12);
+  --primary-muted: rgba(107, 138, 255, 0.06);
+  --primary-glow: rgba(107, 138, 255, 0.18);
+
+  --bg: #0f1117;
+  --bg-elevated: #1a1d2e;
+  --bg-subtle: #252836;
+  --text: #e4e4eb;
+  --text-secondary: #a8a8b8;
+  --text-muted: #6e6e82;
+  --border: #2e3044;
+  --border-light: #252836;
+
+  --danger: #f87171;
+  --success: #34d399;
+  --warning: #fbbf24;
+
+  --surface-chat-user: linear-gradient(135deg, #4f6ef7 0%, #6366f1 100%);
+  --surface-chat-ai: #1a1d2e;
+  --sidebar-bg: #13151f;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-primary: 0 4px 16px rgba(107, 138, 255, 0.15);
+
+  color-scheme: dark;
+}
+
 /* ===== Reset ===== */
 * {
   box-sizing: border-box;
@@ -401,7 +434,7 @@ button, input, textarea, select {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-elevated);
   backdrop-filter: blur(12px) saturate(180%);
   border-bottom: 1px solid var(--border-light);
 }

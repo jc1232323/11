@@ -209,4 +209,54 @@ export class ExamService {
     if (percentage >= 60) return '及格';
     return '不及格';
   }
+
+  async uploadGaokaoQuestions(userId: string, examId: string, questions: Array<Record<string, unknown>>) {
+    if (!examId || !questions || questions.length === 0) {
+      throw new BadRequestException('请提供试卷ID和题目内容');
+    }
+
+    // Save questions to training_questions table (reuse for exam)
+    for (const q of questions) {
+      const existing = await this.questions.findOne({ where: { packId: examId, title: String(q.title || '') } });
+      if (!existing) {
+        await this.questions.save({
+          packId: examId,
+          title: String(q.title || ''),
+          type: String(q.type || '单选题'),
+          prompt: String(q.prompt || ''),
+          options: q.options as Array<{ key: string; text: string }> | null,
+          answer: String(q.answer || ''),
+          analysis: String(q.analysis || ''),
+          knowledgePoints: (q.knowledgePoints as string[]) || [],
+          source: String(q.source || ''),
+          sortOrder: 0,
+        });
+      }
+    }
+
+    // Upsert the exam record
+    const questionScores = questions.map((q) => ({
+      questionId: String(q.id || ''),
+      score: String(q.type) === '单选题' ? 6 : 14,
+    }));
+    const totalScore = questionScores.reduce((sum, qs) => sum + qs.score, 0);
+
+    let exam = await this.exams.findOne({ where: { examId } });
+    if (exam) {
+      exam.questions = questionScores;
+      exam.totalScore = totalScore;
+    } else {
+      exam = this.exams.create({
+        examId,
+        title: `高考真题 ${examId}`,
+        description: '上传的高考真题试卷',
+        duration: 50,
+        totalScore,
+        questions: questionScores,
+      });
+    }
+    await this.exams.save(exam);
+
+    return { ok: true, message: `成功保存 ${questions.length} 道题目`, examId };
+  }
 }

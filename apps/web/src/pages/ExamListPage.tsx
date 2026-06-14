@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Crown, FileCheck, Hexagon, ClipboardList, Lock, Layers, Play, Trophy, AlertCircle } from 'lucide-react';
+import { Clock, Crown, FileCheck, Hexagon, ClipboardList, Lock, Layers, Play, Trophy, AlertCircle, ScrollText, Upload } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 import { isPremium } from '../lib/membership';
 import { useAuth } from '../context/AuthContext';
 import {
   getFallbackExamPapers,
+  getGaokaoPaperList,
   listFallbackExamAttempts,
   startFallbackExamAttempt,
 } from '../lib/exam-fallback';
+import { getGaokaoYears, getGaokaoRegions } from '../lib/gaokao-papers';
 
 type ExamPaper = {
   examId: string;
@@ -29,17 +31,19 @@ type ExamAttemptSummary = {
   submittedAt: string | null;
 };
 
-type Category = 'comprehensive' | 'choice' | 'organic';
+type Category = 'comprehensive' | 'choice' | 'organic' | 'gaokao';
 
 const CATEGORIES: Array<{ key: Category; label: string; icon: typeof FileCheck; color: string }> = [
   { key: 'comprehensive', label: '综合模拟卷', icon: Layers, color: '#4F6EF7' },
   { key: 'choice', label: '选择题专练', icon: ClipboardList, color: '#10b981' },
   { key: 'organic', label: '有机推断', icon: Hexagon, color: '#8b5cf6' },
+  { key: 'gaokao', label: '高考旧卷', icon: ScrollText, color: '#ef4444' },
 ];
 
 function getCategory(examId: string): Category {
   if (examId.startsWith('choice-sprint')) return 'choice';
   if (examId.startsWith('organic-focus')) return 'organic';
+  if (examId.startsWith('gaokao-')) return 'gaokao';
   return 'comprehensive';
 }
 
@@ -65,6 +69,8 @@ export function ExamListPage() {
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('comprehensive');
+  const [gaokaoYear, setGaokaoYear] = useState<number | ''>('');
+  const [gaokaoRegion, setGaokaoRegion] = useState<string>('');
 
   // Premium gate
   if (!isPremium(user)) {
@@ -153,7 +159,9 @@ export function ExamListPage() {
       <div className="exam-tabs">
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
-          const count = papers.filter((p) => getCategory(p.examId) === cat.key).length;
+          const count = cat.key === 'gaokao'
+            ? getGaokaoPaperList().length
+            : papers.filter((p) => getCategory(p.examId) === cat.key).length;
           return (
             <button
               key={cat.key}
@@ -170,12 +178,88 @@ export function ExamListPage() {
         })}
       </div>
 
-      {papers.filter((p) => getCategory(p.examId) === activeCategory).length === 0 ? (
+      {/* Gaokao tab - special layout with filters */}
+      {activeCategory === 'gaokao' && (
+        <div className="gaokao-section">
+          <div className="gaokao-toolbar">
+            <div className="gaokao-filters">
+              <select
+                className="gaokao-filter-select"
+                value={gaokaoYear}
+                onChange={(e) => setGaokaoYear(e.target.value ? Number(e.target.value) : '')}
+              >
+                <option value="">全部年份</option>
+                {getGaokaoYears().map((y) => (
+                  <option key={y} value={y}>{y}年</option>
+                ))}
+              </select>
+              <select
+                className="gaokao-filter-select"
+                value={gaokaoRegion}
+                onChange={(e) => setGaokaoRegion(e.target.value)}
+              >
+                <option value="">全部地区</option>
+                {getGaokaoRegions().map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+            <Link to="/exam/upload" className="btn btn-primary gaokao-upload-link">
+              <Upload size={15} strokeWidth={2} />
+              上传真题
+            </Link>
+          </div>
+          <motion.div className="exam-grid" key={`gaokao-${gaokaoYear}-${gaokaoRegion}`} initial="hidden" animate="visible" variants={staggerContainer}>
+            {getGaokaoPaperList()
+              .filter((p) => (!gaokaoYear || p.year === gaokaoYear) && (!gaokaoRegion || p.region === gaokaoRegion))
+              .map((paper) => {
+                const hasQuestions = paper.questionCount > 0;
+                return (
+                  <motion.section key={paper.examId} className={`card exam-card ${!hasQuestions ? 'exam-card-empty' : ''}`} variants={childVariant}>
+                    <div className="exam-card-head">
+                      <div className="exam-card-icon" style={{ background: '#ef444412', color: '#ef4444' }}>
+                        <ScrollText size={20} strokeWidth={1.8} />
+                      </div>
+                      <div className="exam-card-title-wrap">
+                        <h3>{paper.title}</h3>
+                        <div className="exam-card-meta">
+                          <span><Clock size={13} /> {paper.duration} 分钟</span>
+                          <span>{hasQuestions ? `${paper.questionCount} 题` : '待填充'}</span>
+                          <span>满分 {paper.totalScore}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="exam-card-desc">{paper.description}</p>
+                    <div className="exam-card-footer">
+                      {hasQuestions ? (
+                        <button
+                          type="button"
+                          className="btn btn-primary exam-start-btn"
+                          disabled={starting === paper.examId}
+                          onClick={() => handleStart(paper.examId)}
+                        >
+                          <Play size={14} strokeWidth={2.5} />
+                          {starting === paper.examId ? '进入中...' : '开始考试'}
+                        </button>
+                      ) : (
+                        <span className="exam-card-pending">题目待录入</span>
+                      )}
+                    </div>
+                  </motion.section>
+                );
+              })}
+          </motion.div>
+        </div>
+      )}
+
+      {/* Other categories - standard grid */}
+      {activeCategory !== 'gaokao' && papers.filter((p) => getCategory(p.examId) === activeCategory).length === 0 && (
         <div className="exam-empty">
           <AlertCircle size={40} strokeWidth={1.4} />
           <p>该分类暂无试卷</p>
         </div>
-      ) : (
+      )}
+      {activeCategory !== 'gaokao' && papers.filter((p) => getCategory(p.examId) === activeCategory).length > 0 && (
         <motion.div
           className="exam-grid"
           key={activeCategory}
@@ -209,14 +293,12 @@ export function ExamListPage() {
                     </div>
                   </div>
                   <p className="exam-card-desc">{paper.description}</p>
-
                   {best !== null && (
                     <div className="exam-card-best">
                       <Trophy size={14} strokeWidth={2} />
                       <span>最高分：{best}/{paper.totalScore}（共考 {history.length} 次）</span>
                     </div>
                   )}
-
                   <div className="exam-card-footer">
                     <button
                       type="button"
@@ -283,6 +365,49 @@ export function ExamListPage() {
         .exam-tab.active .exam-tab-count {
           background: color-mix(in srgb, var(--tab-color, var(--primary)) 15%, transparent);
           color: var(--tab-color, var(--primary));
+        }
+        .gaokao-section { margin-top: 0; }
+        .gaokao-toolbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.25rem;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+        }
+        .gaokao-filters {
+          display: flex;
+          gap: 0.6rem;
+          flex-wrap: wrap;
+        }
+        .gaokao-upload-link {
+          font-size: 0.84rem;
+          padding: 0.5rem 0.9rem;
+          text-decoration: none;
+        }
+        .gaokao-filter-select {
+          padding: 0.5rem 0.8rem;
+          border: 1.5px solid var(--border);
+          border-radius: var(--radius);
+          background: var(--bg-elevated);
+          font-size: 0.85rem;
+          color: var(--text);
+          cursor: pointer;
+          min-width: 120px;
+        }
+        .gaokao-filter-select:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .exam-card-empty {
+          opacity: 0.6;
+          border-style: dashed;
+        }
+        .exam-card-pending {
+          font-size: 0.82rem;
+          color: var(--text-muted);
+          font-style: italic;
         }
         .exam-header {
           display: flex;

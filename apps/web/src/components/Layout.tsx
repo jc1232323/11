@@ -2,25 +2,28 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { t } from '../lib/i18n';
 import { MessageSquare, BookOpen, Dumbbell, Settings, Info, Menu, LogOut, User, Star, FileCheck, CalendarDays, Crown } from 'lucide-react';
 
 const sidebarNav = [
-  { to: '/', label: 'AI 问答', icon: MessageSquare },
-  { to: '/chemistry', label: '化学知识', icon: BookOpen },
-  { to: '/training', label: '专题训练', icon: Dumbbell },
-  { to: '/exam', label: '模拟考试', icon: FileCheck },
-  { to: '/study-plan', label: '学习计划', icon: CalendarDays },
-  { to: '/favorites', label: '收藏本', icon: Star },
-  { to: '/settings', label: '设置', icon: Settings },
-  { to: '/about', label: '关于', icon: Info },
+  { to: '/', labelKey: 'nav.chat', icon: MessageSquare },
+  { to: '/chemistry', labelKey: 'nav.chemistry', icon: BookOpen },
+  { to: '/training', labelKey: 'nav.training', icon: Dumbbell },
+  { to: '/exam', labelKey: 'nav.exam', icon: FileCheck },
+  { to: '/study-plan', labelKey: 'nav.studyPlan', icon: CalendarDays },
+  { to: '/favorites', labelKey: 'nav.favorites', icon: Star },
+  { to: '/settings', labelKey: 'nav.settings', icon: Settings },
+  { to: '/about', labelKey: 'nav.about', icon: Info },
 ];
 
 const publicNav = [
-  { to: '/about', label: '关于' },
+  { to: '/about', labelKey: 'nav.about' },
 ];
 
 function PublicLayout() {
   const { user, logout } = useAuth();
+  useTheme(); // subscribe to locale changes for re-render
   const location = useLocation();
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/register';
@@ -36,7 +39,7 @@ function PublicLayout() {
             <nav className="public-nav">
               {publicNav.map((item) => (
                 <NavLink key={item.to} to={item.to} className="btn btn-ghost">
-                  {item.label}
+                  {t(item.labelKey)}
                 </NavLink>
               ))}
               {user ? (
@@ -45,15 +48,15 @@ function PublicLayout() {
                   className="btn btn-ghost"
                   onClick={() => logout()}
                 >
-                  退出
+                  {t('nav.logout')}
                 </button>
               ) : (
                 <>
                   <Link to="/login" className="btn btn-ghost">
-                    登录
+                    {t('common.login')}
                   </Link>
                   <Link to="/register" className="btn btn-primary">
-                    注册
+                    {t('common.register')}
                   </Link>
                 </>
               )}
@@ -79,6 +82,7 @@ function PublicLayout() {
 
 function AppShell() {
   const { user, logout } = useAuth();
+  useTheme(); // subscribe to locale changes for re-render
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -96,7 +100,7 @@ function AppShell() {
           </Link>
           <Link to="/membership" className="sidebar-vip-btn" onClick={() => setSidebarOpen(false)}>
             <Crown size={13} strokeWidth={2} />
-            会员
+            {t('nav.membership')}
           </Link>
         </div>
         <nav className="sidebar-nav">
@@ -113,7 +117,7 @@ function AppShell() {
                 onClick={() => setSidebarOpen(false)}
               >
                 <Icon size={18} strokeWidth={1.8} />
-                {item.label}
+                {t(item.labelKey)}
               </NavLink>
             );
           })}
@@ -125,7 +129,7 @@ function AppShell() {
           </span>
           <button type="button" className="btn btn-ghost" onClick={() => logout()}>
             <LogOut size={15} strokeWidth={1.8} />
-            退出
+            {t('nav.logout')}
           </button>
         </div>
       </aside>
