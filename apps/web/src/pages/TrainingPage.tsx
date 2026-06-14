@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
+  Atom,
+  BookOpenCheck,
   ClipboardList,
   Dumbbell,
+  Flame,
   FlaskConical,
+  Gauge,
+  GitBranch,
   Hexagon,
+  Link2,
   Play,
+  Scale,
   Sparkles,
+  TestTubes,
   Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +41,18 @@ const childVariant = {
 };
 
 const PACK_ICONS: Record<TrainingPackId, typeof Zap> = {
+  'mol-calculation': BookOpenCheck,
+  'ion-reaction': TestTubes,
+  redox: Scale,
+  'atom-structure': Atom,
+  'chemical-bond': Link2,
+  'molecular-structure': GitBranch,
+  'reaction-heat': Flame,
+  'reaction-rate': Gauge,
+  'chemical-equilibrium': Scale,
+  hydrocarbon: Hexagon,
+  'functional-group': GitBranch,
+  'organic-synthesis': FlaskConical,
   electrochemistry: Zap,
   experiment: FlaskConical,
   organic: Hexagon,

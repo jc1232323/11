@@ -3,14 +3,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
+  Atom,
   BookOpenCheck,
   ChevronDown,
   ClipboardList,
   Eye,
   EyeOff,
+  Flame,
   FlaskConical,
+  Gauge,
+  GitBranch,
   Hexagon,
+  Link2,
   Loader2,
+  Scale,
+  TestTubes,
   Zap,
 } from 'lucide-react';
 import { api } from '../lib/api';
@@ -18,6 +25,18 @@ import { ChemText } from '../components/ChemText';
 import { getTrainingPackDetail, type TrainingPackDetail } from '../lib/training-packs';
 
 const PACK_ICONS: Record<string, typeof Zap> = {
+  'mol-calculation': BookOpenCheck,
+  'ion-reaction': TestTubes,
+  redox: Scale,
+  'atom-structure': Atom,
+  'chemical-bond': Link2,
+  'molecular-structure': GitBranch,
+  'reaction-heat': Flame,
+  'reaction-rate': Gauge,
+  'chemical-equilibrium': Scale,
+  hydrocarbon: Hexagon,
+  'functional-group': GitBranch,
+  'organic-synthesis': FlaskConical,
   electrochemistry: Zap,
   experiment: FlaskConical,
   organic: Hexagon,

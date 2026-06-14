@@ -1,13 +1,17 @@
 /**
  * Seed training packs and questions from the static frontend data into the database.
- * Run: npx ts-node --project scripts/tsconfig.json scripts/seed-training.ts
+ * Run: npx ts-node --esm --project scripts/tsconfig.json scripts/seed-training.ts
  */
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 // Import the static data
-import { TRAINING_PACKS } from '../apps/web/src/lib/training-packs';
+import { TRAINING_PACKS } from '../apps/web/src/lib/training-packs.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const ds = new DataSource({
   type: 'mysql',

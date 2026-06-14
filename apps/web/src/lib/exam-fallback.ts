@@ -1,4 +1,5 @@
 import { TRAINING_PACKS, type TrainingQuestion, type TrainingQuestionType } from './training-packs';
+import { COMPREHENSIVE_QUESTIONS, CHOICE_ONLY_QUESTIONS, ORGANIC_QUESTIONS, type ExamQuestion } from './exam-questions';
 
 type ExamQuestionScore = {
   questionId: string;
@@ -66,61 +67,100 @@ export type FallbackExamAttempt = {
 };
 
 const STORAGE_KEY = 'chem-qa:fallback-exam-attempts';
-const ALL_QUESTIONS = TRAINING_PACKS.flatMap((pack) => pack.questions);
-const QUESTION_MAP = new Map(ALL_QUESTIONS.map((question) => [question.id, question]));
-const CHOICE_QUESTIONS = ALL_QUESTIONS.filter((question) => question.type === '单选题');
-const WRITTEN_QUESTIONS = ALL_QUESTIONS.filter((question) => question.type !== '单选题');
-const ORGANIC_QUESTIONS = TRAINING_PACKS.find((pack) => pack.id === 'organic')?.questions ?? [];
+const ALL_TRAINING_QUESTIONS = TRAINING_PACKS.flatMap((pack) => pack.questions);
 
-function buildPaper(
+// Merge all question sources into one map for lookup
+const ALL_EXAM_QUESTIONS: Array<TrainingQuestion | ExamQuestion> = [
+  ...ALL_TRAINING_QUESTIONS,
+  ...COMPREHENSIVE_QUESTIONS,
+  ...CHOICE_ONLY_QUESTIONS,
+  ...ORGANIC_QUESTIONS as ExamQuestion[],
+];
+const QUESTION_MAP = new Map(ALL_EXAM_QUESTIONS.map((q) => [q.id, q]));
+
+function buildPaperFromIds(
   examId: string,
   title: string,
   description: string,
   duration: number,
-  questions: Array<{ question: TrainingQuestion; score: number }>,
+  questionScores: Array<{ id: string; score: number }>,
 ): FallbackExamPaper {
   return {
     examId,
     title,
     description,
     duration,
-    totalScore: questions.reduce((sum, item) => sum + item.score, 0),
-    questions: questions.map((item) => ({
-      questionId: item.question.id,
-      score: item.score,
-    })),
+    totalScore: questionScores.reduce((sum, item) => sum + item.score, 0),
+    questions: questionScores.map((item) => ({ questionId: item.id, score: item.score })),
   };
 }
 
+// Build 10 comprehensive papers (12 questions each from comp-1 to comp-120)
+function buildComprehensivePapers(): FallbackExamPaper[] {
+  const papers: FallbackExamPaper[] = [];
+  for (let i = 0; i < 10; i++) {
+    const start = i * 12;
+    const ids = COMPREHENSIVE_QUESTIONS.slice(start, start + 12);
+    const scores = ids.map((q) => ({
+      id: q.id,
+      score: q.type === '单选题' ? 3 : 8,
+    }));
+    papers.push(buildPaperFromIds(
+      `comprehensive-mock-${i + 1}`,
+      `高考化学综合模拟卷（${['一','二','三','四','五','六','七','八','九','十'][i]}）`,
+      `第${i + 1}套综合模拟，涵盖多种题型和考点，题目不与其他试卷重复。`,
+      45,
+      scores,
+    ));
+  }
+  return papers;
+}
+
+// Build 10 choice-only papers (10 questions each from cs-1 to cs-50 + training choices)
+function buildChoicePapers(): FallbackExamPaper[] {
+  const allChoices = [
+    ...CHOICE_ONLY_QUESTIONS,
+    ...ALL_TRAINING_QUESTIONS.filter((q) => q.type === '单选题'),
+  ];
+  const papers: FallbackExamPaper[] = [];
+  for (let i = 0; i < 10; i++) {
+    const start = i * 10;
+    const batch = allChoices.slice(start, start + 10);
+    if (batch.length < 5) break;
+    papers.push(buildPaperFromIds(
+      `choice-sprint-${i + 1}`,
+      `选择题限时冲刺（${['一','二','三','四','五','六','七','八','九','十'][i]}）`,
+      `第${i + 1}套选择题专练，10道不重复选择题。`,
+      20,
+      batch.map((q) => ({ id: q.id, score: 4 })),
+    ));
+  }
+  return papers;
+}
+
+// Build 10 organic papers (8 questions each from orgex-1 to orgex-80)
+function buildOrganicPapers(): FallbackExamPaper[] {
+  const papers: FallbackExamPaper[] = [];
+  for (let i = 0; i < 10; i++) {
+    const start = i * 8;
+    const batch = ORGANIC_QUESTIONS.slice(start, start + 8);
+    if (batch.length < 4) break;
+    papers.push(buildPaperFromIds(
+      `organic-focus-${i + 1}`,
+      `有机推断专项测试（${['一','二','三','四','五','六','七','八','九','十'][i]}）`,
+      `第${i + 1}套有机推断专练，题目不与其他试卷重复。`,
+      30,
+      batch.map((q) => ({ id: q.id, score: q.type === '单选题' ? 4 : 10 })),
+    ));
+  }
+  return papers;
+}
+
 const FALLBACK_EXAM_PAPERS: FallbackExamPaper[] = [
-  buildPaper(
-    'comprehensive-mock-1',
-    '高考化学综合模拟卷（一）',
-    '涵盖电化学、实验、有机化学等高考重点内容，开箱即用的内置模拟卷。',
-    45,
-    [
-      ...CHOICE_QUESTIONS.slice(0, 8).map((question) => ({ question, score: 3 })),
-      ...WRITTEN_QUESTIONS.slice(0, 4).map((question) => ({ question, score: 8 })),
-    ],
-  ),
-  buildPaper(
-    'choice-sprint',
-    '选择题限时冲刺',
-    '内置选择题快练卷，适合先做一轮限时热身。',
-    20,
-    CHOICE_QUESTIONS.map((question) => ({ question, score: 4 })),
-  ),
-  buildPaper(
-    'organic-focus',
-    '有机推断专项测试',
-    '用内置有机推断题直接组成专项卷，不用先导入数据库。',
-    25,
-    ORGANIC_QUESTIONS.map((question) => ({
-      question,
-      score: question.type === '单选题' ? 4 : 10,
-    })),
-  ),
-].filter((paper) => paper.questions.length > 0);
+  ...buildComprehensivePapers(),
+  ...buildChoicePapers(),
+  ...buildOrganicPapers(),
+];
 
 function isBrowser() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';

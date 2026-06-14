@@ -31,7 +31,7 @@ function PublicLayout() {
         <header className="public-header">
           <div className="container public-header-inner">
             <Link to="/" className="public-logo">
-              化学<span>问答</span>
+              学<span>小</span>问
             </Link>
             <nav className="public-nav">
               {publicNav.map((item) => (
@@ -92,7 +92,7 @@ function AppShell() {
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-top">
           <Link to="/" className="sidebar-logo" onClick={() => setSidebarOpen(false)}>
-            化学<span>问答</span>
+            学<span>小</span>问
           </Link>
           <Link to="/membership" className="sidebar-vip-btn" onClick={() => setSidebarOpen(false)}>
             <Crown size={13} strokeWidth={2} />
@@ -140,7 +140,7 @@ function AppShell() {
             <Menu size={20} />
           </button>
           <span className="public-logo">
-            化学<span>问答</span>
+            学<span>小</span>问
           </span>
         </div>
         <motion.main
