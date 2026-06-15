@@ -64,6 +64,7 @@ const childVariant = {
 export function ExamListPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const premiumUser = isPremium(user);
   const [papers, setPapers] = useState<ExamPaper[]>([]);
   const [attempts, setAttempts] = useState<ExamAttemptSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,7 +74,7 @@ export function ExamListPage() {
   const [gaokaoRegion, setGaokaoRegion] = useState<string>('');
 
   // Premium gate
-  if (!isPremium(user)) {
+  if (!premiumUser) {
     return (
       <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
         <Lock size={48} strokeWidth={1.4} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
@@ -88,6 +89,11 @@ export function ExamListPage() {
   }
 
   useEffect(() => {
+    if (!premiumUser) {
+      setLoading(false);
+      return;
+    }
+
     const fallbackPapers = getFallbackExamPapers();
     const fallbackAttempts = listFallbackExamAttempts();
 
@@ -99,7 +105,7 @@ export function ExamListPage() {
       setAttempts(Array.isArray(a) && a.length > 0 ? a : fallbackAttempts);
       setLoading(false);
     });
-  }, []);
+  }, [premiumUser]);
 
   const handleStart = async (examId: string) => {
     setStarting(examId);

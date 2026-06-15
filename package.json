@@ -11,6 +11,7 @@
     "dev:api": "npm run dev -w @chem-qa/api",
     "dev:web": "npm run dev -w @chem-qa/web",
     "build": "npm run build -w @chem-qa/api && npm run build -w @chem-qa/web",
+    "lint:web": "eslint apps/web/src --ext .ts,.tsx",
     "mail:test": "ts-node --project scripts/tsconfig.json scripts/check-smtp.ts",
     "import-content": "npm run import-content -w @chem-qa/api",
     "db:up": "docker compose up -d",
@@ -19,6 +20,10 @@
   "devDependencies": {
     "concurrently": "^9.1.2",
     "ts-node": "^10.9.2",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "@eslint/js": "^9.29.0",
+    "eslint": "^9.29.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "typescript-eslint": "^8.34.1"
   }
 }
