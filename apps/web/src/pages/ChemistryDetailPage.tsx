@@ -1,10 +1,39 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MarkdownView } from '../components/MarkdownView';
 import type { KnowledgeAskState } from '../lib/knowledge-ask';
 import { api, type KnowledgeDetail } from '../lib/api';
 import { BookOpen, GraduationCap, ChevronLeft, ChevronRight, Loader2, Sparkles, Star } from 'lucide-react';
+
+/** 懒加载动画组件映射 — 按需加载，不影响首屏 */
+const illustrationLoaders: Record<string, () => Promise<{ default: React.ComponentType }>> = {
+  'mol-concept': () => import('../components/chemistry-illustrations/MolConceptAnimation').then(m => ({ default: m.MolConceptAnimation })),
+  'gas-molar-volume': () => import('../components/chemistry-illustrations/GasMolarVolumeAnimation').then(m => ({ default: m.GasMolarVolumeAnimation })),
+  'amount-concentration': () => import('../components/chemistry-illustrations/ConcentrationAnimation').then(m => ({ default: m.ConcentrationAnimation })),
+  'electrolyte': () => import('../components/chemistry-illustrations/ElectrolyteAnimation').then(m => ({ default: m.ElectrolyteAnimation })),
+  'ion-equations': () => import('../components/chemistry-illustrations/IonEquationsAnimation').then(m => ({ default: m.IonEquationsAnimation })),
+  'precipitation': () => import('../components/chemistry-illustrations/PrecipitationAnimation').then(m => ({ default: m.PrecipitationAnimation })),
+  'redox-intro': () => import('../components/chemistry-illustrations/RedoxAnimation').then(m => ({ default: m.RedoxAnimation })),
+  'atom-structure': () => import('../components/chemistry-illustrations/AtomStructureAnimation').then(m => ({ default: m.AtomStructureAnimation })),
+  'ionic-covalent-bond': () => import('../components/chemistry-illustrations/IonicCovalentBondAnimation').then(m => ({ default: m.IonicCovalentBondAnimation })),
+  'enthalpy': () => import('../components/chemistry-illustrations/EnthalpyAnimation').then(m => ({ default: m.EnthalpyAnimation })),
+  'hess-law': () => import('../components/chemistry-illustrations/HessLawAnimation').then(m => ({ default: m.HessLawAnimation })),
+  'rate-factors': () => import('../components/chemistry-illustrations/ReactionRateAnimation').then(m => ({ default: m.ReactionRateAnimation })),
+  'collision-theory': () => import('../components/chemistry-illustrations/CollisionTheoryAnimation').then(m => ({ default: m.CollisionTheoryAnimation })),
+  'alkanes-alkenes': () => import('../components/chemistry-illustrations/AlkanesAlkenesAnimation').then(m => ({ default: m.AlkanesAlkenesAnimation })),
+  'alcohols-phenols': () => import('../components/chemistry-illustrations/AlcoholsPhenolsAnimation').then(m => ({ default: m.AlcoholsPhenolsAnimation })),
+};
+
+/** 缓存 lazy() 结果，避免重复创建 */
+const lazyCache = new Map<string, React.LazyExoticComponent<React.ComponentType>>();
+function getLazyIllustration(slug: string) {
+  if (!illustrationLoaders[slug]) return null;
+  if (!lazyCache.has(slug)) {
+    lazyCache.set(slug, lazy(illustrationLoaders[slug]));
+  }
+  return lazyCache.get(slug)!;
+}
 
 export function ChemistryDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -68,6 +97,7 @@ export function ChemistryDetailPage() {
   }
 
   const body = detail.mdBody.replace(/^---[\s\S]*?---\n/, '');
+  const LazyIllustration = useMemo(() => slug ? getLazyIllustration(slug) : null, [slug]);
 
   return (
     <motion.article
@@ -109,6 +139,11 @@ export function ChemistryDetailPage() {
 
       <div className="detail-body markdown-body">
         <MarkdownView content={body} />
+        {LazyIllustration && (
+          <Suspense fallback={<div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)' }}>加载动画...</div>}>
+            <LazyIllustration />
+          </Suspense>
+        )}
       </div>
 
       <div className="detail-ai-bar">

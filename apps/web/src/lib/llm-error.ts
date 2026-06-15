@@ -20,6 +20,17 @@ export function formatLlmError(raw: string): string {
 function mapMessage(msg: string): string {
   const lower = msg.toLowerCase();
   if (
+    lower.includes('insufficient balance') ||
+    lower.includes('insufficient_quota') ||
+    lower.includes('quota exceeded') ||
+    lower.includes('credit balance') ||
+    lower.includes('billing') ||
+    msg.includes('余额不足') ||
+    msg.includes('额度不足')
+  ) {
+    return 'AI 服务暂时不可用：平台大模型账户额度不足，请稍后重试或联系管理员处理。';
+  }
+  if (
     lower.includes('authentication') ||
     lower.includes('api key') ||
     msg.includes('your-api-key-here')

@@ -1,35 +1,74 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+
+const PLACEHOLDER_MARKERS = ['your-email', 'your-smtp', 'changeme', 'example.com'];
+
+function hasPlaceholder(value: string): boolean {
+  const lower = value.toLowerCase();
+  return PLACEHOLDER_MARKERS.some((marker) => lower.includes(marker));
+}
 
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
+  private readonly configured: boolean;
+  private readonly fromAddress: string;
 
   constructor(private readonly config: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: this.config.get<string>('SMTP_HOST') || 'smtp.qq.com',
-      port: Number(this.config.get<string>('SMTP_PORT') || 465),
-      secure: true,
-      auth: {
-        user: this.config.get<string>('SMTP_USER'),
-        pass: this.config.get<string>('SMTP_PASS'),
-      },
-    });
+    const user = this.config.get<string>('SMTP_USER')?.trim() ?? '';
+    const pass = this.config.get<string>('SMTP_PASS')?.trim() ?? '';
+    const rawFrom = this.config.get<string>('MAIL_FROM')?.trim() ?? '';
+    const port = Number(this.config.get<string>('SMTP_PORT') || 465);
+
+    this.fromAddress = rawFrom && !hasPlaceholder(rawFrom) ? rawFrom : user;
+    this.configured = Boolean(user && pass) && !hasPlaceholder(`${user} ${pass}`);
+
+    if (this.configured) {
+      this.transporter = nodemailer.createTransport({
+        host: this.config.get<string>('SMTP_HOST') || 'smtp.qq.com',
+        port,
+        secure: port === 465,
+        auth: { user, pass },
+      });
+      this.logger.log(`邮件服务已配置：${user}`);
+      if (rawFrom && rawFrom !== this.fromAddress) {
+        this.logger.warn('MAIL_FROM 仍为占位符，已自动回退为 SMTP_USER 作为发件人。');
+      }
+    } else {
+      this.logger.warn(
+        '邮件服务未配置（SMTP_USER/SMTP_PASS 为空或为占位符）。验证码和重置邮件将直接报错，不会伪装成发送成功。',
+      );
+    }
+  }
+
+  /** True when real SMTP credentials are present */
+  get isConfigured(): boolean {
+    return this.configured;
   }
 
   private get from(): string {
-    return this.config.get<string>('MAIL_FROM') || this.config.get<string>('SMTP_USER') || '';
+    return this.fromAddress;
   }
 
   private get clientUrl(): string {
     return (this.config.get<string>('CLIENT_URL') || 'http://localhost:5173').replace(/\/$/, '');
   }
 
+  private getTransporter(): nodemailer.Transporter {
+    if (!this.transporter) {
+      throw new ServiceUnavailableException(
+        '邮件服务未配置。请在 .env 中填写 SMTP_USER 和 SMTP_PASS；如果使用 QQ 邮箱，SMTP_PASS 必须填写 QQ 邮箱授权码，而不是 QQ 密码。',
+      );
+    }
+    return this.transporter;
+  }
+
   async sendVerificationCode(to: string, code: string): Promise<void> {
+    const transporter = this.getTransporter();
     try {
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: this.from,
         to,
         subject: '注册验证码 - 化学知识问答',
@@ -55,8 +94,9 @@ export class MailService {
 
   async sendPasswordResetEmail(to: string, token: string): Promise<void> {
     const link = `${this.clientUrl}/reset-password?token=${token}`;
+    const transporter = this.getTransporter();
     try {
-      await this.transporter.sendMail({
+      await transporter.sendMail({
         from: this.from,
         to,
         subject: '重置密码 - 化学知识问答',

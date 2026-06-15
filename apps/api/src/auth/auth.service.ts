@@ -48,9 +48,9 @@ export class AuthService {
     }
 
     const code = String(Math.floor(100000 + Math.random() * 900000)); // 6 digits
-    verificationCodes.set(email, { code, expiresAt: Date.now() + 5 * 60 * 1000 }); // 5min
 
     await this.mail.sendVerificationCode(email, code);
+    verificationCodes.set(email, { code, expiresAt: Date.now() + 5 * 60 * 1000 }); // 5min
     return { message: '验证码已发送' };
   }
 
@@ -105,7 +105,14 @@ export class AuthService {
     user.resetPasswordToken = token;
     user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1h
     await this.users.save(user);
-    await this.mail.sendPasswordResetEmail(email, token);
+    try {
+      await this.mail.sendPasswordResetEmail(email, token);
+    } catch (error) {
+      user.resetPasswordToken = null;
+      user.resetPasswordExpires = null;
+      await this.users.save(user);
+      throw error;
+    }
     return { message: '如果该邮箱已注册，重置链接将发送到你的邮箱' };
   }
 
@@ -129,6 +136,18 @@ export class AuthService {
 
   signToken(user: User): string {
     return this.jwt.sign({ sub: user.id, email: user.email });
+  }
+
+  async getUserFromToken(token?: string | null): Promise<User | null> {
+    if (!token) return null;
+
+    try {
+      const payload = await this.jwt.verifyAsync<{ sub: string }>(token);
+      if (!payload?.sub) return null;
+      return await this.users.findOne({ where: { id: payload.sub } });
+    } catch {
+      return null;
+    }
   }
 
   sanitizeUser(user: User) {
