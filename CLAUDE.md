@@ -62,7 +62,7 @@ npx ts-node --esm --project scripts/tsconfig.json scripts/seed-training.ts
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
   ```
-- **遗留待修**：`seed-accounts.ts`（建 `vip@test.com` / `free@test.com` 测试账号，密码 `test123456`）、`seed-exams.ts` 仍用裸 `__dirname`，运行前需先按上方改造，否则同样报错。
+- **遗留待修**：`seed-exams.ts` 仍用裸 `__dirname`，运行前需先按上方改造，否则同样报错。`seed-accounts.ts` 已改为复用后端初始化逻辑，可创建 `vip@test.com` / `vie@test.com` / `free@test.com`，密码均为 `test123456`。
 
 ### LLM 接入（核心）
 - 走 **OpenAI 兼容 `/v1/chat/completions`**，默认 DeepSeek（`LLM_API_BASE`/`LLM_API_KEY`/`LLM_MODEL_NAME`）。Key 必须与 Base URL 同平台。

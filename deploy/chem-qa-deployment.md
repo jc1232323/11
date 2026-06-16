@@ -1,6 +1,7 @@
 # chem-qa 部署记录
 
 部署日期：2026-06-16  
+最近更新：2026-06-16 23:27，补齐 Docker 启动测试账号初始化  
 访问域名：<https://jc.glowxq.com>  
 服务器：`182.43.106.206`  
 
@@ -9,7 +10,7 @@
 固定版本镜像：
 
 ```text
-registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 ```
 
 latest 镜像：
@@ -21,7 +22,7 @@ registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-latest
 本次服务器实际运行固定版本镜像，避免 latest 漂移：
 
 ```text
-registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 ```
 
 ## 容器
@@ -59,7 +60,7 @@ docker run -d \
   -p 127.0.0.1:8170:80 \
   -v chem_qa_data:/data \
   -e CLIENT_URL=https://jc.glowxq.com \
-  registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+  registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 ```
 
 初始化策略：
@@ -68,7 +69,13 @@ docker run -d \
 INIT_CONTENT=missing
 ```
 
-启动时如果 `knowledge_nodes` 已有数据则跳过导入；空库会自动初始化知识点。
+启动时如果 `knowledge_nodes` 已有数据则跳过导入；空库会自动初始化知识点。每次启动都会补齐测试账号并重置为固定密码：
+
+```text
+vip@test.com  / test123456 / yearly
+vie@test.com  / test123456 / yearly
+free@test.com / test123456 / free
+```
 
 ## Nginx
 
@@ -161,6 +168,14 @@ https://jc.glowxq.com/ -> 200
 https://jc.glowxq.com/api/llm/health -> 200
 ```
 
+测试账号登录验证：
+
+```text
+vip@test.com  / test123456 -> 201, plan=yearly
+vie@test.com  / test123456 -> 201, plan=yearly
+free@test.com / test123456 -> 201, plan=free
+```
+
 LLM 健康接口响应：
 
 ```json
@@ -173,7 +188,7 @@ LLM 健康接口响应：
 
 ```text
 container=chem-qa
-image=registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+image=registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 restart=unless-stopped
 ports=127.0.0.1:8170->80
 memory≈62.87MiB
@@ -198,7 +213,7 @@ docker restart chem-qa
 重新部署固定版本：
 
 ```bash
-docker pull registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+docker pull registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 docker rm -f chem-qa
 docker volume create chem_qa_data
 docker run -d \
@@ -207,7 +222,7 @@ docker run -d \
   -p 127.0.0.1:8170:80 \
   -v chem_qa_data:/data \
   -e CLIENT_URL=https://jc.glowxq.com \
-  registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+  registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 ```
 
 测试并重载 Nginx：
@@ -247,8 +262,8 @@ docker build --platform=linux/amd64 --pull=false -t chem-qa:single .
 推送镜像：
 
 ```bash
-docker tag chem-qa:single registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+docker tag chem-qa:single registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 docker tag chem-qa:single registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-latest
-docker push registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-1133
+docker push registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-20260616-2327
 docker push registry.cn-guangzhou.aliyuncs.com/glowxq/app:chem-qa-latest
 ```

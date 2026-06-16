@@ -26,6 +26,7 @@ Never copy secrets from `remote-defaults.sh` into skill files or deploy docs. So
 - chem-qa data volume: `chem_qa_data`
 - SQLite DB in container: `/data/chem-qa.sqlite`
 - Preferred public access: nginx HTTPS -> `127.0.0.1:<host-port>` -> container `80`
+- Test accounts must work after deploy: `vip@test.com`, `vie@test.com`, and `free@test.com` all use password `test123456`.
 
 Use these shell variables for examples unless the user specifies different values:
 
@@ -101,6 +102,7 @@ DATA_VOLUME=chem_qa_data
      '$IMAGE_FULL'
    sleep 6
    docker ps --filter name='$CONTAINER_NAME' --format '{{.Names}} {{.Image}} {{.Status}} {{.Ports}}'
+   docker logs --tail=80 '$CONTAINER_NAME' | grep -E '\\[init-accounts\\]|API running|\\[entrypoint\\]' || true
    curl -sS -o /tmp/chem-qa-index.html -w 'local_http=%{http_code} bytes=%{size_download}\n' http://127.0.0.1:'$HOST_PORT'/
    "
    ```
@@ -134,6 +136,12 @@ DATA_VOLUME=chem_qa_data
    curl -sS -o /tmp/jc-health.txt -w 'health=%{http_code}\n' "https://${DOMAIN}/health"
    curl -sS -o /tmp/jc-index.html -w 'home=%{http_code} bytes=%{size_download}\n' "https://${DOMAIN}/"
    curl -sS -o /tmp/jc-llm.json -w 'api=%{http_code}\n' "https://${DOMAIN}/api/llm/health"
+   for email in vip@test.com vie@test.com free@test.com; do
+     curl -sS -o "/tmp/jc-login-${email}.json" -w "${email} login=%{http_code}\n" \
+       -H 'Content-Type: application/json' \
+       -d "{\"email\":\"${email}\",\"password\":\"test123456\"}" \
+       "https://${DOMAIN}/api/auth/login"
+   done
    echo | openssl s_client -servername "$DOMAIN" -connect "$DOMAIN:443" 2>/dev/null | openssl x509 -noout -subject -dates
    ```
    `api/llm/health` may return HTTP 200 with `{"ok":false,"message":"HTTP 402：Insufficient Balance"}`. Treat that as app/proxy reachable but upstream LLM billing unavailable.
@@ -149,6 +157,7 @@ DATA_VOLUME=chem_qa_data
 - Docker build-time npm can fail with `ECONNRESET`; this repo's Dockerfile avoids npm in Docker by packaging local dependencies and local `dist` outputs.
 - macOS `node_modules` can contain Darwin Rollup/esbuild optional packages. Do not run `npm run build` inside a Linux image using copied macOS dependencies.
 - Native modules (`sqlite3`, `bcrypt`) cause `node-gyp`/headers failures. This deployment uses `sql.js` and `bcryptjs`.
+- A 200 homepage is not enough. Always verify seeded login accounts; `vie@test.com` is kept as a compatibility alias for the common `vip@test.com` typo.
 - Never overwrite nginx live config until `nginx -t -c /etc/nginx/nginx-new.conf` passes.
 - Bind app containers to `127.0.0.1` unless direct public access is intentional.
 - Always set `CLIENT_URL` to the final HTTPS domain on the server.

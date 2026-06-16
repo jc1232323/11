@@ -13,7 +13,7 @@ export INIT_CONTENT="${INIT_CONTENT:-missing}"
 export SERVE_STATIC_ROOT="${SERVE_STATIC_ROOT:-/app/apps/web/dist}"
 
 echo "[entrypoint] database: ${DATABASE_TYPE} ${DATABASE_PATH}"
-echo "[entrypoint] initializing database/content, INIT_CONTENT=${INIT_CONTENT}"
+echo "[entrypoint] initializing database/content/test accounts, INIT_CONTENT=${INIT_CONTENT}"
 su node -s /bin/sh -c 'node apps/api/dist/init-content.js'
 
 exec "$@"

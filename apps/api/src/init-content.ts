@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { loadEnvFiles } from './config/load-env';
 import { appEntities, buildDataSourceOptions } from './config/database.config';
 import { KnowledgeNode } from './entities/knowledge-node.entity';
+import { seedTestAccounts } from './init-test-accounts';
 
 type MetaTopic = {
   slug: string;
@@ -123,10 +124,11 @@ async function main() {
   const mode = process.env.INIT_CONTENT ?? 'always';
   if (mode === 'never') {
     console.log('[init-content] skipped because INIT_CONTENT=never');
-    return;
+  } else {
+    await importKnowledgeContent({ force: mode !== 'missing' });
   }
 
-  await importKnowledgeContent({ force: mode !== 'missing' });
+  await seedTestAccounts();
 }
 
 if (typeof require !== 'undefined' && require.main === module) {
