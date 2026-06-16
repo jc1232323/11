@@ -1,26 +1,99 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MarkdownView } from '../components/MarkdownView';
 import type { KnowledgeAskState } from '../lib/knowledge-ask';
-import { api, type KnowledgeDetail } from '../lib/api';
-import { BookOpen, GraduationCap, ChevronLeft, ChevronRight, Loader2, Sparkles, Star } from 'lucide-react';
+import { ApiError, api, type KnowledgeDetail } from '../lib/api';
+import { BookOpen, GraduationCap, ChevronLeft, ChevronRight, Loader2, Sparkles, Star, TriangleAlert } from 'lucide-react';
+
+/** 懒加载动画组件映射 — 按需加载，不影响首屏 */
+const illustrationLoaders: Record<string, () => Promise<{ default: React.ComponentType }>> = {
+  'mol-concept': () => import('../components/chemistry-illustrations/MolConceptAnimation').then(m => ({ default: m.MolConceptAnimation })),
+  'gas-molar-volume': () => import('../components/chemistry-illustrations/GasMolarVolumeAnimation').then(m => ({ default: m.GasMolarVolumeAnimation })),
+  'amount-concentration': () => import('../components/chemistry-illustrations/ConcentrationAnimation').then(m => ({ default: m.ConcentrationAnimation })),
+  'electrolyte': () => import('../components/chemistry-illustrations/ElectrolyteAnimation').then(m => ({ default: m.ElectrolyteAnimation })),
+  'ion-equations': () => import('../components/chemistry-illustrations/IonEquationsAnimation').then(m => ({ default: m.IonEquationsAnimation })),
+  'precipitation': () => import('../components/chemistry-illustrations/PrecipitationAnimation').then(m => ({ default: m.PrecipitationAnimation })),
+  'redox-intro': () => import('../components/chemistry-illustrations/RedoxAnimation').then(m => ({ default: m.RedoxAnimation })),
+  'atom-structure': () => import('../components/chemistry-illustrations/AtomStructureAnimation').then(m => ({ default: m.AtomStructureAnimation })),
+  'ionic-covalent-bond': () => import('../components/chemistry-illustrations/IonicCovalentBondAnimation').then(m => ({ default: m.IonicCovalentBondAnimation })),
+  'enthalpy': () => import('../components/chemistry-illustrations/EnthalpyAnimation').then(m => ({ default: m.EnthalpyAnimation })),
+  'hess-law': () => import('../components/chemistry-illustrations/HessLawAnimation').then(m => ({ default: m.HessLawAnimation })),
+  'rate-factors': () => import('../components/chemistry-illustrations/ReactionRateAnimation').then(m => ({ default: m.ReactionRateAnimation })),
+  'collision-theory': () => import('../components/chemistry-illustrations/CollisionTheoryAnimation').then(m => ({ default: m.CollisionTheoryAnimation })),
+  'alkanes-alkenes': () => import('../components/chemistry-illustrations/AlkanesAlkenesAnimation').then(m => ({ default: m.AlkanesAlkenesAnimation })),
+  'alcohols-phenols': () => import('../components/chemistry-illustrations/AlcoholsPhenolsAnimation').then(m => ({ default: m.AlcoholsPhenolsAnimation })),
+};
+
+/** 缓存 lazy() 结果，避免重复创建 */
+const lazyCache = new Map<string, React.LazyExoticComponent<React.ComponentType>>();
+function getLazyIllustration(slug: string) {
+  if (!illustrationLoaders[slug]) return null;
+  if (!lazyCache.has(slug)) {
+    lazyCache.set(slug, lazy(illustrationLoaders[slug]));
+  }
+  return lazyCache.get(slug)!;
+}
 
 export function ChemistryDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [detail, setDetail] = useState<KnowledgeDetail | null>(null);
   const [favorited, setFavorited] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const LazyIllustration = useMemo(() => (slug ? getLazyIllustration(slug) : null), [slug]);
+  const body = detail?.mdBody.replace(/^---[\s\S]*?---\n/, '') ?? '';
 
   useEffect(() => {
-    if (!slug) return;
-    api<KnowledgeDetail>(`/knowledge/${slug}`).then(setDetail).catch(() => setDetail(null));
-    // Check favorite status
+    let cancelled = false;
+
+    if (!slug) {
+      setDetail(null);
+      setFavorited(false);
+      setError('知识点链接无效');
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setLoading(true);
+    setError('');
+    setDetail(null);
+    setFavorited(false);
+
+    api<KnowledgeDetail>(`/knowledge/${slug}`)
+      .then((result) => {
+        if (cancelled) return;
+        setDetail(result);
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setDetail(null);
+        if (err instanceof ApiError && err.status === 404) {
+          setError('该知识点不存在或尚未导入');
+          return;
+        }
+        setError('知识点加载失败，请稍后重试');
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoading(false);
+      });
+
     api<{ favorited: boolean }>(`/favorites/check/topic/${slug}`)
-      .then((r) => setFavorited(r.favorited))
+      .then((r) => {
+        if (cancelled) return;
+        setFavorited(r.favorited);
+      })
       .catch(() => {});
-    // Record view for progress tracking
+
     api('/progress/view', { method: 'POST', body: JSON.stringify({ topicSlug: slug }) }).catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   async function toggleFavorite() {
@@ -46,7 +119,7 @@ export function ChemistryDetailPage() {
     navigate('/', { state: { knowledgeAsk: state } });
   }
 
-  if (!detail) {
+  if (loading) {
     return (
       <div className="container detail-loading">
         <Loader2 size={24} className="detail-spinner" />
@@ -67,7 +140,60 @@ export function ChemistryDetailPage() {
     );
   }
 
-  const body = detail.mdBody.replace(/^---[\s\S]*?---\n/, '');
+  if (error || !detail) {
+    return (
+      <div className="container detail-empty-state">
+        <div className="card detail-empty-card">
+          <TriangleAlert size={28} strokeWidth={1.8} className="detail-empty-icon" />
+          <h1>知识点暂时无法打开</h1>
+          <p>{error || '当前知识点数据异常，请返回目录重新进入。'}</p>
+          <div className="detail-empty-actions">
+            <Link to="/chemistry" className="btn btn-primary">
+              返回知识目录
+            </Link>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => window.location.reload()}
+            >
+              重新加载
+            </button>
+          </div>
+        </div>
+        <style>{`
+          .detail-empty-state {
+            display: flex;
+            justify-content: center;
+            padding: 3rem 0 2rem;
+          }
+          .detail-empty-card {
+            width: min(560px, 100%);
+            padding: 2rem;
+            text-align: center;
+          }
+          .detail-empty-icon {
+            color: var(--warning);
+            margin-bottom: 0.9rem;
+          }
+          .detail-empty-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.65rem;
+            color: var(--text);
+          }
+          .detail-empty-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+          }
+          .detail-empty-actions {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <motion.article
@@ -109,6 +235,11 @@ export function ChemistryDetailPage() {
 
       <div className="detail-body markdown-body">
         <MarkdownView content={body} />
+        {LazyIllustration && (
+          <Suspense fallback={<div style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-muted)' }}>加载动画...</div>}>
+            <LazyIllustration />
+          </Suspense>
+        )}
       </div>
 
       <div className="detail-ai-bar">

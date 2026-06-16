@@ -3,18 +3,15 @@ import {
   Controller,
   Post,
   Get,
+  Req,
   Res,
-  UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { User } from '../entities/user.entity';
-import { CurrentUser } from './current-user.decorator';
+import { Request, Response } from 'express';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -59,10 +56,10 @@ export class AuthController {
     return { ok: true };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('me')
-  me(@CurrentUser() user: User) {
-    return { user: this.auth.sanitizeUser(user) };
+  async me(@Req() req: Request) {
+    const user = await this.auth.getUserFromToken(req.cookies?.access_token);
+    return { user: user ? this.auth.sanitizeUser(user) : null };
   }
 
   @Post('forgot-password')

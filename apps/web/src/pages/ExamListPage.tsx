@@ -64,6 +64,7 @@ const childVariant = {
 export function ExamListPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const premiumUser = isPremium(user);
   const [papers, setPapers] = useState<ExamPaper[]>([]);
   const [attempts, setAttempts] = useState<ExamAttemptSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,8 +73,27 @@ export function ExamListPage() {
   const [gaokaoYear, setGaokaoYear] = useState<number | ''>('');
   const [gaokaoRegion, setGaokaoRegion] = useState<string>('');
 
+  useEffect(() => {
+    if (!premiumUser) {
+      setLoading(false);
+      return;
+    }
+
+    const fallbackPapers = getFallbackExamPapers();
+    const fallbackAttempts = listFallbackExamAttempts();
+
+    Promise.all([
+      api<ExamPaper[]>('/exam/papers').catch(() => []),
+      api<ExamAttemptSummary[]>('/exam/attempts').catch(() => []),
+    ]).then(([p, a]) => {
+      setPapers(Array.isArray(p) && p.length > 0 ? p : fallbackPapers);
+      setAttempts(Array.isArray(a) && a.length > 0 ? a : fallbackAttempts);
+      setLoading(false);
+    });
+  }, [premiumUser]);
+
   // Premium gate
-  if (!isPremium(user)) {
+  if (!premiumUser) {
     return (
       <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
         <Lock size={48} strokeWidth={1.4} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
@@ -86,20 +106,6 @@ export function ExamListPage() {
       </div>
     );
   }
-
-  useEffect(() => {
-    const fallbackPapers = getFallbackExamPapers();
-    const fallbackAttempts = listFallbackExamAttempts();
-
-    Promise.all([
-      api<ExamPaper[]>('/exam/papers').catch(() => []),
-      api<ExamAttemptSummary[]>('/exam/attempts').catch(() => []),
-    ]).then(([p, a]) => {
-      setPapers(Array.isArray(p) && p.length > 0 ? p : fallbackPapers);
-      setAttempts(Array.isArray(a) && a.length > 0 ? a : fallbackAttempts);
-      setLoading(false);
-    });
-  }, []);
 
   const handleStart = async (examId: string) => {
     setStarting(examId);
