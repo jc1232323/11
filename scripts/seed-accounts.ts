@@ -10,7 +10,7 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
 import { join } from 'path';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 const ds = new DataSource({
   type: 'mysql',

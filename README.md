@@ -6,7 +6,29 @@
 
 - 前端：React + TypeScript + Vite + Framer Motion
 - 后端：NestJS + TypeScript + TypeORM
-- 数据库：MySQL 8（Docker）
+- 数据库：SQLite（Docker 单镜像低内存运行）/ MySQL 8（本地开发可选）
+
+## Docker 单镜像运行
+
+项目支持一个镜像内运行前端、后端和 SQLite 文件数据库，不需要单独启动 MySQL。
+
+```bash
+npm install
+npm run build
+docker build -t chem-qa:single .
+docker run -d --name chem-qa -p 8080:80 -v chem_qa_data:/data chem-qa:single
+```
+
+- 访问地址：http://localhost:8080
+- API 地址：http://localhost:8080/api
+- SQLite 数据库文件：容器内 `/data/chem-qa.sqlite`
+- 初始化策略：`INIT_CONTENT=missing` 时仅空库导入知识点；可改为 `always` 每次重建知识点，或 `never` 跳过导入。
+
+如果要覆盖镜像内置环境变量：
+
+```bash
+docker run -d --name chem-qa -p 8080:80 -v chem_qa_data:/data --env-file .env chem-qa:single
+```
 
 ## 快速开始
 
@@ -28,7 +50,7 @@ npm install
 cp .env.example .env
 ```
 
-`.env` 中默认已对齐下方 MySQL 账号。请配置 **你自己的** 大模型 Key：
+`.env` 默认使用 SQLite。请配置 **你自己的** 大模型 Key：
 
 ```env
 LLM_API_BASE=https://api.deepseek.com
@@ -47,7 +69,9 @@ LLM_MODEL_NAME=deepseek-chat     # 或所用模型名
 
 **端口被占用 `EADDRINUSE :::3001`：** 说明上一次的 API 还在跑。先执行 `npm run stop`，再 `npm run dev`；或直接再跑一次 `npm run dev`（已会自动清理 3001 端口）。
 
-### 4. 启动 MySQL
+### 4. 可选：启动 MySQL
+
+默认 SQLite 不需要启动 MySQL。如需本地开发使用 MySQL，请把 `.env` 中 `DATABASE_TYPE` 改为 `mysql`，再启动：
 
 ```bash
 npm run db:up
@@ -65,7 +89,7 @@ npm run db:up
 
 ### 5. 导入化学知识点
 
-等待 MySQL 就绪后（约 10–20 秒）：
+SQLite 可直接导入；MySQL 需等待数据库就绪后（约 10–20 秒）：
 
 ```bash
 npm run import-content
@@ -120,5 +144,5 @@ npm run import-content
 ## 生产部署提示
 
 - 将 `synchronize: true` 改为迁移方案
-- 使用强随机 `JWT_SECRET`；`LLM_API_KEY` 勿提交到 Git
+- 使用强随机 `JWT_SECRET`；`LLM_API_KEY` 和 SMTP 授权码勿发布到不可信镜像仓库
 - 启用 HTTPS，Cookie `secure: true`

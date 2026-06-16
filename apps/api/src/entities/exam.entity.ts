@@ -24,7 +24,7 @@ export class Exam {
   totalScore!: number;
 
   /** JSON array of {questionId, score} */
-  @Column({ type: 'json' })
+  @Column({ type: 'simple-json' })
   questions!: Array<{ questionId: string; score: number }>;
 
   @Column({ name: 'sort_order', default: 0 })
