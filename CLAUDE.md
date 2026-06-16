@@ -29,6 +29,10 @@ npx ts-node --esm --project scripts/tsconfig.json scripts/seed-training.ts
 
 无单测套件（api/web 均无 test 脚本）。验证改动靠跑 `npm run dev` + 浏览器实测；后端自检 `http://localhost:3001/api/llm/health`。
 
+## 项目内 Skills
+
+- `skills/deploy-chem-qa-single-image/SKILL.md`：复用本项目单镜像 Docker + SQLite + 阿里云 ACR + 服务器 Docker + nginx-ui 发布流程时优先读取，包含部署步骤、验证命令和踩坑点。
+
 ## 架构要点（需跨文件阅读才能理清的部分）
 
 ### 仓库结构
