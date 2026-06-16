@@ -157,6 +157,7 @@ export class AuthService {
       nickname: user.nickname,
       defaultRole: user.defaultRole,
       emailVerified: user.emailVerified,
+      isAdmin: user.isAdmin,
       plan: user.plan,
       planExpiresAt: user.planExpiresAt?.toISOString() ?? null,
     };

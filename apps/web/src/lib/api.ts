@@ -41,6 +41,7 @@ export type User = {
   nickname: string;
   defaultRole: RoleId;
   emailVerified: boolean;
+  isAdmin: boolean;
   plan: 'free' | 'monthly' | 'quarterly' | 'yearly';
   planExpiresAt: string | null;
 };

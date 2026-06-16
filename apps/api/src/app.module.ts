@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
 import { ChatModule } from './chat/chat.module';
 import { ExamModule } from './exam/exam.module';
 import { FavoritesModule } from './favorites/favorites.module';
@@ -62,6 +63,7 @@ import { UsersModule } from './users/users.module';
     MailModule,
     LlmModule,
     AuthModule,
+    AdminModule,
     UsersModule,
     KnowledgeModule,
     ChatModule,

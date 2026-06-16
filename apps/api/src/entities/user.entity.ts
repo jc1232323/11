@@ -31,6 +31,10 @@ export class User {
   @Column({ name: 'email_verified', default: false })
   emailVerified!: boolean;
 
+  /** Whether the user can access the admin backend */
+  @Column({ name: 'is_admin', default: false })
+  isAdmin!: boolean;
+
   /** Membership plan: free | monthly | quarterly | yearly */
   @Column({ type: 'varchar', length: 16, default: 'free' })
   plan!: PlanType;
