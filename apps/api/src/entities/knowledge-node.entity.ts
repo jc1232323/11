@@ -20,6 +20,6 @@ export class KnowledgeNode {
   @Column({ name: 'sort_order', default: 0 })
   sortOrder!: number;
 
-  @Column({ name: 'md_body', type: 'longtext', nullable: true })
+  @Column({ name: 'md_body', type: 'text', nullable: true })
   mdBody!: string | null;
 }

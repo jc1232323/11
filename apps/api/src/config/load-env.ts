@@ -14,7 +14,7 @@ export function loadEnvFiles(): string | null {
   let loaded: string | null = null;
   for (const path of candidates) {
     if (existsSync(path)) {
-      config({ path, override: true });
+      config({ path, override: false });
       loaded = path;
     }
   }

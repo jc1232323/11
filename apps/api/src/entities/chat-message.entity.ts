@@ -23,7 +23,7 @@ export class ChatMessage {
   @Column({ type: 'varchar', length: 32 })
   role!: 'user' | 'assistant' | 'system';
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   content!: string;
 
   @CreateDateColumn({ name: 'created_at' })

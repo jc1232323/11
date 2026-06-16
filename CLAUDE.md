@@ -29,6 +29,10 @@ npx ts-node --esm --project scripts/tsconfig.json scripts/seed-training.ts
 
 无单测套件（api/web 均无 test 脚本）。验证改动靠跑 `npm run dev` + 浏览器实测；后端自检 `http://localhost:3001/api/llm/health`。
 
+## 项目内 Skills
+
+- `skills/deploy-chem-qa-single-image/SKILL.md`：复用本项目单镜像 Docker + SQLite + 阿里云 ACR + 服务器 Docker + nginx-ui 发布流程时优先读取，包含部署步骤、验证命令和踩坑点。
+
 ## 架构要点（需跨文件阅读才能理清的部分）
 
 ### 仓库结构
@@ -42,11 +46,23 @@ npx ts-node --esm --project scripts/tsconfig.json scripts/seed-training.ts
 - **唯一配置源是项目根目录 `.env`**（从 `.env.example` 复制）。后端通过 `config/load-env.ts` + `ConfigModule` 按多候选路径回溯到根 `.env`；`import-content`/seed 脚本各自 `dotenv` 加载根 `.env`。
 - 改 `.env` 后**必须重启** `npm run dev` 才生效。
 - 前端经 Vite 代理 `/api` → `localhost:3001`，所有请求走 `apps/web/src/lib/api.ts` 的 `api()`（`credentials: include`，JWT 在 httpOnly cookie）。
+- **邮件发送（SMTP，必配否则注册验证码 / 找回密码发不出）**：`mail/mail.service.ts` 用 nodemailer，需 `.env` 配 `SMTP_HOST`/`SMTP_PORT`/`SMTP_USER`/`SMTP_PASS`/`MAIL_FROM`。默认 QQ 邮箱 `smtp.qq.com:465`（`secure:true`），`SMTP_PASS` 填邮箱**授权码**（非登录密码，QQ 邮箱设置里开启 IMAP/SMTP 后生成）。模板见 `.env.example`。transporter 在 service 构造时创建，改这些值后须重启。自检：`POST /api/auth/send-code {"email":...}` 返回 201 且日志出现「验证码已发送至 …」即通。
 
 ### 数据库 / TypeORM
 - MySQL 8（docker-compose，宿主 `3307` → 容器 `3306`，库 `chem_qa`）。
 - `TypeOrmModule` 配 **`synchronize: true`**：改实体即自动 ALTER 表，**无迁移文件**。重命名/删列要当心数据丢失。新增实体记得加进 `app.module.ts` 的 `entities` 数组。
 - `import-content` 会 **TRUNCATE 重建 `knowledge_nodes`**；编辑 `content/chemistry/` 后需重跑。该表是自引用三级树（`parent_id` + `type`=module/chapter/topic，topic 的 `md_body` 存正文）。
+
+### 脚本（scripts/）的 ESM 约定 ⚠️
+- Node 22 + `scripts/tsconfig.json`（`module: ESNext` + `moduleResolution: bundler`）下，ts-node 把 `scripts/*.ts` 当 **ES module** 执行，CommonJS 全局 `__dirname` / `__filename` **不存在**，裸用会报 `__dirname is not defined in ES module scope`（导入/种子直接挂掉）。
+- 正确写法（参考 `seed-training.ts` 与已修的 `import-content.ts`）：
+  ```ts
+  import { fileURLToPath } from 'url';
+  import { dirname } from 'path';
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+  ```
+- **遗留待修**：`seed-exams.ts` 仍用裸 `__dirname`，运行前需先按上方改造，否则同样报错。`seed-accounts.ts` 已改为复用后端初始化逻辑，可创建 `vip@test.com` / `vie@test.com` / `free@test.com`，密码均为 `test123456`。
 
 ### LLM 接入（核心）
 - 走 **OpenAI 兼容 `/v1/chat/completions`**，默认 DeepSeek（`LLM_API_BASE`/`LLM_API_KEY`/`LLM_MODEL_NAME`）。Key 必须与 Base URL 同平台。

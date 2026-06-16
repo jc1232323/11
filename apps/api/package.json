@@ -6,7 +6,7 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main",
-    "import-content": "ts-node --project ../../scripts/tsconfig.json ../../scripts/import-content.ts"
+    "import-content": "npm run build && node dist/init-content.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.12",
@@ -17,7 +17,7 @@
     "@nestjs/platform-express": "^11.0.12",
     "@nestjs/typeorm": "^11.0.0",
     "@types/nodemailer": "^8.0.1",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
@@ -28,6 +28,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "sql.js": "^1.14.1",
     "typeorm": "^0.3.21"
   },
   "devDependencies": {

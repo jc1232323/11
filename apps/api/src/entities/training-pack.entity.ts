@@ -19,7 +19,7 @@ export class TrainingPack {
   description!: string;
 
   /** JSON array of tag strings */
-  @Column({ type: 'json' })
+  @Column({ type: 'simple-json' })
   tags!: string[];
 
   @Column({ name: 'sort_order', default: 0 })

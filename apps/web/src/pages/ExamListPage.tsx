@@ -73,21 +73,6 @@ export function ExamListPage() {
   const [gaokaoYear, setGaokaoYear] = useState<number | ''>('');
   const [gaokaoRegion, setGaokaoRegion] = useState<string>('');
 
-  // Premium gate
-  if (!premiumUser) {
-    return (
-      <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
-        <Lock size={48} strokeWidth={1.4} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
-        <h2 style={{ fontSize: '1.3rem', color: 'var(--text)', marginBottom: '0.5rem' }}>模拟考试为会员专属功能</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>升级会员后可无限次参加模拟考试</p>
-        <Link to="/membership" className="btn btn-primary" style={{ textDecoration: 'none' }}>
-          <Crown size={16} strokeWidth={2} />
-          升级会员
-        </Link>
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (!premiumUser) {
       setLoading(false);
@@ -106,6 +91,21 @@ export function ExamListPage() {
       setLoading(false);
     });
   }, [premiumUser]);
+
+  // Premium gate
+  if (!premiumUser) {
+    return (
+      <div className="container" style={{ paddingTop: '3rem', textAlign: 'center' }}>
+        <Lock size={48} strokeWidth={1.4} style={{ color: 'var(--text-muted)', marginBottom: '1rem' }} />
+        <h2 style={{ fontSize: '1.3rem', color: 'var(--text)', marginBottom: '0.5rem' }}>模拟考试为会员专属功能</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>升级会员后可无限次参加模拟考试</p>
+        <Link to="/membership" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+          <Crown size={16} strokeWidth={2} />
+          升级会员
+        </Link>
+      </div>
+    );
+  }
 
   const handleStart = async (examId: string) => {
     setStarting(examId);

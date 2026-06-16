@@ -31,7 +31,7 @@ export class StudyPlan {
   weakPoints!: string | null;
 
   /** AI 生成的计划 JSON */
-  @Column({ name: 'plan_content', type: 'longtext' })
+  @Column({ name: 'plan_content', type: 'text' })
   planContent!: string;
 
   @CreateDateColumn({ name: 'created_at' })

@@ -20,7 +20,7 @@ export class TrainingQuestion {
   prompt!: string;
 
   /** JSON array of {key, text} or null */
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   options!: Array<{ key: string; text: string }> | null;
 
   @Column({ type: 'text' })
@@ -30,7 +30,7 @@ export class TrainingQuestion {
   analysis!: string;
 
   /** JSON array of knowledge point strings */
-  @Column({ name: 'knowledge_points', type: 'json' })
+  @Column({ name: 'knowledge_points', type: 'simple-json' })
   knowledgePoints!: string[];
 
   @Column({ type: 'varchar', length: 255 })

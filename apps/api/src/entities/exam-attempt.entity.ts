@@ -35,7 +35,7 @@ export class ExamAttempt {
   userId!: string;
 
   /** JSON: { questionId: userAnswer } */
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   answers!: Record<string, string> | null;
 
   @Column({ type: 'int', nullable: true })
@@ -45,12 +45,12 @@ export class ExamAttempt {
   totalScore!: number;
 
   /** JSON report with detailed analysis */
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'simple-json', nullable: true })
   report!: ExamReport | null;
 
   @CreateDateColumn({ name: 'started_at' })
   startedAt!: Date;
 
-  @Column({ name: 'submitted_at', type: 'timestamp', nullable: true })
+  @Column({ name: 'submitted_at', type: 'datetime', nullable: true })
   submittedAt!: Date | null;
 }

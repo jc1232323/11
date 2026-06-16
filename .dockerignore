@@ -1,0 +1,16 @@
+.git
+.idea
+.cursor
+.claude
+.playwright-mcp
+data
+*.log
+*.sqlite
+*.sqlite-*
+Dockerfile
+docker-compose.yml
+chem-home.png
+tencent-*.png
+lighthouse-*.json
+describe-task-devices-lighthouse.json
+tencent-beian-dom.json
